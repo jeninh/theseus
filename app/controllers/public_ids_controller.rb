@@ -42,7 +42,7 @@ class PublicIdsController < ApplicationController
       clazzes = ActiveRecord::Base.descendants.select { |c| c.included_modules.include?(PublicIdentifiable) }
       clazz = clazzes.find { |c| c.public_id_prefix == prefix }
       unless clazz.present?
-        return redirect_to public_ids_path, alert: "don't think we have that prefix: #{prefix}"
+        return search_by_tracking_number(params[:id])
       end
       @record = clazz.find_by_public_id(params[:id])
       unless @record.present?
@@ -56,6 +56,26 @@ class PublicIdsController < ApplicationController
     end
   rescue ActiveRecord::RecordNotFound => e
     flash[:alert] = "Record not found"
+    redirect_to public_ids_path
+  end
+
+  private
+
+  def search_by_tracking_number(tracking_number)
+    # Search for warehouse orders by tracking number
+    warehouse_order = Warehouse::Order.find_by(tracking_number: tracking_number)
+    if warehouse_order
+      return redirect_to warehouse_order_path(warehouse_order)
+    end
+
+    lsv = LSV::MarketingShipmentRequest.first_where("{Warehouse–Tracking Number} = '#{tracking_number.gsub("'", "\\'")}'")
+
+    if lsv
+      return redirect_to show_lsv_path(LSV.slug_for(lsv), lsv.id)
+    end
+
+    # No package found with this tracking number
+    flash[:alert] = "nothing found at all."
     redirect_to public_ids_path
   end
 end

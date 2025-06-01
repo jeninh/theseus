@@ -4,7 +4,8 @@ module Public
 
     def show
       @lsv = LSV::SLUGS[params[:slug].to_sym]&.find(params[:id])
-      raise ActiveRecord::RecordNotFound unless @lsv && @lsv.email == current_public_user&.email
+      raise ActiveRecord::RecordNotFound unless @lsv
+      raise ActiveRecord::RecordNotFound unless @lsv.email == current_public_user&.email || current_user
     rescue Norairrecord::RecordNotFoundError
       raise ActiveRecord::RecordNotFound
     end
