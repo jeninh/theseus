@@ -1,0 +1,14 @@
+<%= render @warehouse_sku %>
+<%= render partial: "admin_inspector", locals: { record: @warehouse_sku } %>
+
+<% zenv_link @warehouse_sku %>
+
+<div>
+  <% admin_tool do %>
+    <%= link_to "edit this SKU", edit_admin_warehouse_sku_path(@warehouse_sku) %>
+  <% end %>
+
+
+  <%= link_to "back to SKUs", warehouse_skus_path %>
+
+</div>

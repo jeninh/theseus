@@ -1,0 +1,117 @@
+class Public::UpdateMapDataJob < ApplicationJob
+  queue_as :default
+
+  def perform
+    map_data = fetch_recent_letters_data
+    Rails.cache.write("map_data", map_data, expires_in: 1.hour)
+    map_data
+  end
+
+  private
+
+  def fetch_recent_letters_data
+    # Get mailed letters (any time) and letters received in the last 7 days
+    recent_letters = Letter.joins(:address, :return_address)
+      .where(
+        "aasm_state = 'mailed' OR (aasm_state = 'received' AND received_at >= ?)",
+        7.days.ago
+      )
+      .includes(:iv_mtr_events, :address, :return_address)
+
+    letters_data = recent_letters.map do |letter|
+      event_coords = build_letter_event_coordinates(letter)
+
+      bubble_title = if letter.aasm_state == "received"
+          "a letter was received here!"
+        elsif letter.iv_mtr_events.blank?
+          "a letter was mailed here!"
+        else
+          "a letter was last seen here!"
+        end
+
+      {
+        coordinates: event_coords,
+        current_location: event_coords.last,
+        destination_coords: geocode_destination(letter.address),
+        bubble_title: bubble_title,
+        aasm_state: letter.aasm_state,
+      }
+    end
+
+    letters_data
+  end
+
+  def build_letter_event_coordinates(letter)
+    coordinates = []
+
+    # Mailed event coordinates
+    if letter.mailed_at.present?
+      coords = geocode_origin(letter.return_address)
+      coordinates << coords
+    end
+
+    # USPS tracking event coordinates (ordered by scan datetime)
+    if letter.iv_mtr_events.present?
+      # Order events by scan datetime to get proper chronological order
+      ordered_events = letter.iv_mtr_events.sort_by { |event| event.scan_datetime || event.happened_at }
+
+      ordered_events.each do |event|
+        begin
+          hydrated = event.hydrated
+          locale_key = hydrated.scan_locale_key
+          if locale_key.present?
+            coords = geocode_usps_facility(locale_key)
+            coordinates << coords if coords
+          end
+        rescue => e
+          Rails.logger.warn("Failed to process IV-MTR event #{event.id}: #{e.message}")
+          # Continue processing other events
+        end
+      end
+    end
+
+    # Received event coordinates
+    if letter.received_at.present?
+      coords = geocode_destination(letter.address)
+      coordinates << coords
+    end
+
+    coordinates.compact
+  end
+
+  def geocode_origin(return_address)
+    # Special case: anything in Shelburne goes to FIFTEEN_FALLS
+    if return_address.city&.downcase&.include?("shelburne")
+      return {
+               lat: GeocodingService::FIFTEEN_FALLS[:lat].to_f,
+               lon: GeocodingService::FIFTEEN_FALLS[:lon].to_f,
+             }
+    end
+
+    # Use non-exact geocoding to avoid doxing
+    result = GeocodingService.geocode_return_address(return_address, exact: false)
+    {
+      lat: result[:lat].to_f,
+      lon: result[:lon].to_f,
+    }
+  end
+
+  def geocode_destination(address)
+    # Use non-exact geocoding (city only) to avoid doxing
+    result = GeocodingService.geocode_address_model(address, exact: false)
+    {
+      lat: result[:lat].to_f,
+      lon: result[:lon].to_f,
+    }
+  end
+
+  def geocode_usps_facility(locale_key)
+    result = GeocodingService::USPSFacilities.coords_for_locale_key(locale_key)
+    return nil unless result
+
+    {
+      lat: result[:lat].to_f,
+      lon: result[:lon].to_f,
+    }
+  end
+end

@@ -1,0 +1,13 @@
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <%= vite_client_tag %>
+  <%= vite_stylesheet_tag 'login_page.scss' %>
+</head>
+<body>
+<%= vite_image_tag 'images/login/treasure.png', id: "treasure" %>
+<%= render 'shared/flash' %>
+<h1>welcome ashore...</h1>
+<%= link_to "log in?", slack_auth_path %>
+</body>
+</html>

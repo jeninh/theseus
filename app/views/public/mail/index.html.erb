@@ -1,0 +1,41 @@
+<% if @mail.any? %>
+  <div class="window">
+    <div class="title-bar">
+      <div class="title-bar-text">the mail</div>
+      <div class="title-bar-controls">
+        <%= w95_title_button_to("Close", public_root_path) %>
+      </div>
+    </div>
+    <div class="window-body">
+      here's your mail:
+      <div class="sunken-panel" style="height: 200px; width: fit-content">
+        <table class="interactive">
+          <thead>
+            <tr>
+              <th>Date Created</th>
+              <th>Mailpiece</th>
+              <th>Status</th>
+              <th>Open</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render @mail, collection: true %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="window" style="width: 300px; background-color: blue; color: white">
+    <div class="title-bar">
+      <div class="title-bar-text">NO MAIL</div>
+      <div class="title-bar-controls">
+        <%= w95_title_button_to("Close", public_root_path) %>
+      </div>
+    </div>
+    <div class="window-body" style=" border-color: blue;">
+      <%= vite_image_tag 'images/no_mail.png', id: "no_mail" %>
+      <p>we don't have any mail for you in the new system...<br/>check back later?</p>
+    </div>
+  </div>
+<% end %>

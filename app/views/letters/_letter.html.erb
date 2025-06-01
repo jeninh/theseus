@@ -1,0 +1,36 @@
+<div id="<%= dom_id letter %>" class="letter-item p-3 bg-white border rounded shadow-sm hover:shadow-md transition-shadow">
+  <div class="flex justify-between items-center mb-2">
+    <h3 class="text-base font-medium">
+      <%= link_to letter do %>
+        <% if letter.user_facing_title.present? %>
+          <%= letter.user_facing_title %>
+        <% else %>
+          <%= letter.public_id %> to <%= letter.address.name_line %>
+        <% end %>
+      <% end %>
+    </h3>
+    <%= letter_status_badge(letter.aasm_state, 'float-right') %>
+  </div>
+  
+  <div class="grid grid-cols-3 gap-1 text-sm text-gray-600">
+    <div class="truncate">
+      <span class="text-gray-400">From:</span>
+      <%= letter.return_address.present? ? letter.return_address_name_line : 'N/A' %>
+    </div>
+    
+    <div class="truncate">
+      <span class="text-gray-400">Created:</span>
+      <%= time_ago_in_words(letter.created_at) %>
+    </div>
+    
+    <div class="truncate">
+      <span class="text-gray-400">Size:</span>
+      <%= letter.height %>" × <%= letter.width %>"
+    </div>
+  </div>
+  
+  <div class="mt-2">
+    <span class="text-gray-400">Tags:</span>
+    <%= render 'shared/tags', tags: letter.tags %>
+  </div>
+</div>

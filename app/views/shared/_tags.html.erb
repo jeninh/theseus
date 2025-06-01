@@ -1,0 +1,9 @@
+<%# Tags display partial that can be used for any taggable model %>
+<%# Usage: render 'shared/tags', tags: model.tags %>
+<% if tags.present? %>
+  <div class="tags">
+    <% tags.compact_blank.each do |tag| %>
+      <%= render 'tags/tag', tag: %>
+    <% end %>
+  </div>
+<% end %> 

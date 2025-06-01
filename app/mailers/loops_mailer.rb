@@ -1,0 +1,2 @@
+class LoopsMailer < ApplicationMailer
+end
