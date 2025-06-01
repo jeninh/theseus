@@ -60,7 +60,7 @@ class Public::UpdateMapDataJob < ApplicationJob
           hydrated = event.hydrated
           locale_key = hydrated.scan_locale_key
           if locale_key.present?
-            coords = geocode_usps_facility(locale_key)
+            coords = geocode_usps_facility(locale_key, event)
             coordinates << coords if coords
           end
         rescue => e
@@ -105,8 +105,8 @@ class Public::UpdateMapDataJob < ApplicationJob
     }
   end
 
-  def geocode_usps_facility(locale_key)
-    result = GeocodingService::USPSFacilities.coords_for_locale_key(locale_key)
+  def geocode_usps_facility(locale_key, event)
+    result = GeocodingService::USPSFacilities.coords_for_locale_key(locale_key, event)
     return nil unless result
 
     {

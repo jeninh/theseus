@@ -48,6 +48,8 @@ module GeocodingService
     end
 
     def hackclub_geocode(params)
+      return nil if params.nil?
+
       Rails.logger.info "Hack Club Geocoding: #{params}"
 
       address_components = []

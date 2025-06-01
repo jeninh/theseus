@@ -8,11 +8,27 @@ module GeocodingService
         },
       }
 
-      def coords_for_locale_key(locale_key)
+      def coords_for_locale_key(locale_key, event = nil)
         SPECIAL_CASES[locale_key] ||
           Rails.cache.fetch("geocode_usps_facility_#{locale_key}", expires_in: 1.day) do
-            GeocodingService.first_hit(address_for_locale_key(locale_key)) ||
-            GeocodingService.first_hit(address_for_locale_key(locale_key).slice(:city, :state, :postalcode, :country))
+            address = address_for_locale_key(locale_key)
+            if address
+              GeocodingService.first_hit(address) ||
+              GeocodingService.first_hit(address.slice(:city, :state, :postalcode, :country))
+            elsif event
+              # Fallback to event scan facility data when USPS facility lookup fails
+              facility = event.scan_facility
+              fallback_address = {
+                city: facility[:city],
+                state: facility[:state],
+                postalcode: facility[:zip],
+                country: "US",
+              }
+              Rails.logger.warn "USPS facility not found for locale_key #{locale_key}, falling back to scan facility data: #{fallback_address}"
+              GeocodingService.first_hit(fallback_address)
+            else
+              nil
+            end
           end
       end
 
