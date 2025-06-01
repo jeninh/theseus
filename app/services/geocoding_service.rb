@@ -44,11 +44,11 @@ module GeocodingService
     end
 
     def first_hit(params)
-      google_geocode(params)
+      hackclub_geocode(params)
     end
 
-    def google_geocode(params)
-      Rails.logger.info "Google Geocoding: #{params}"
+    def hackclub_geocode(params)
+      Rails.logger.info "Hack Club Geocoding: #{params}"
 
       address_components = []
       address_components << params[:street] if params[:street]
@@ -59,29 +59,37 @@ module GeocodingService
 
       address = address_components.join(", ")
 
-      response = conn.get("maps/api/geocode/json", {
+      response = conn.get("v1/geocode", {
         address: address,
-        key: ENV["GOOGLE_MAPS_API_KEY"]
+        key: ENV["HACKCLUB_GEOCODER_API_KEY"],
       })
 
-      results = response.body["results"]
-      return nil if results.empty?
+      # Handle error responses
+      if response.body.key?("error")
+        Rails.logger.error "Hack Club Geocoder error: #{response.body["error"]}"
+        Honeybadger.notify("Geocoding error: #{response.body["error"]}")
+        return nil
+      end
 
-      result = results.first
-      location = result["geometry"]["location"]
+      # Parse successful response
+      result = response.body
 
       {
-        lat: location["lat"].to_s,
-        lon: location["lng"].to_s,
+        lat: result["lat"].to_s,
+        lon: result["lng"].to_s, # hc api returns "lng", we convert to "lon" for consistency with OSM
         display_name: result["formatted_address"],
-        place_id: result["place_id"]
+        place_id: result.dig("raw_backend_response", "results", 0, "place_id") || "dunno",
       }
+    rescue => e
+      Rails.logger.error "Hack Club Geocoder request failed: #{e.message}"
+      Honeybadger.notify(e)
+      nil
     end
 
     private
 
     def conn
-      @conn ||= Faraday.new(url: "https://maps.googleapis.com/") do |faraday|
+      @conn ||= Faraday.new(url: "https://geocoder.hackclub.com/") do |faraday|
         faraday.request :url_encoded
         faraday.adapter Faraday.default_adapter
         faraday.response :json
