@@ -39,7 +39,7 @@ class Public::UpdateMapDataJob < ApplicationJob
         bubble_title: bubble_title,
         aasm_state: letter.aasm_state,
       }
-    end
+    end.select { |letter_data| letter_data[:coordinates].present? }
 
     letters_data
   end
@@ -93,12 +93,18 @@ class Public::UpdateMapDataJob < ApplicationJob
 
     # Use non-exact geocoding to avoid doxing
     result = GeocodingService.geocode_return_address(return_address, exact: false)
-    return nil unless result && result[:lat] && result[:lon]
-
-    {
-      lat: result[:lat].to_f,
-      lon: result[:lon].to_f,
-    }
+    if result && result[:lat] && result[:lon]
+      {
+        lat: result[:lat].to_f,
+        lon: result[:lon].to_f,
+      }
+    else
+      # Fallback to FIFTEEN_FALLS if geocoding fails
+      {
+        lat: GeocodingService::FIFTEEN_FALLS[:lat].to_f,
+        lon: GeocodingService::FIFTEEN_FALLS[:lon].to_f,
+      }
+    end
   end
 
   def geocode_destination(address)
