@@ -29,9 +29,12 @@ class Public::UpdateMapDataJob < ApplicationJob
           "a letter was last seen here!"
         end
 
+      # Find the last valid coordinate (in case the final event failed to geocode)
+      current_location = event_coords.last
+
       {
         coordinates: event_coords,
-        current_location: event_coords.last,
+        current_location: current_location,
         destination_coords: geocode_destination(letter.address),
         bubble_title: bubble_title,
         aasm_state: letter.aasm_state,
@@ -76,7 +79,7 @@ class Public::UpdateMapDataJob < ApplicationJob
       coordinates << coords
     end
 
-    coordinates.compact
+    coordinates.compact.reject { |coord| coord.nil? || coord[:lat].nil? || coord[:lon].nil? }
   end
 
   def geocode_origin(return_address)
@@ -91,7 +94,7 @@ class Public::UpdateMapDataJob < ApplicationJob
     # Use non-exact geocoding to avoid doxing
     result = GeocodingService.geocode_return_address(return_address, exact: false)
     return nil unless result && result[:lat] && result[:lon]
-    
+
     {
       lat: result[:lat].to_f,
       lon: result[:lon].to_f,
@@ -102,7 +105,7 @@ class Public::UpdateMapDataJob < ApplicationJob
     # Use non-exact geocoding (city only) to avoid doxing
     result = GeocodingService.geocode_address_model(address, exact: false)
     return nil unless result && result[:lat] && result[:lon]
-    
+
     {
       lat: result[:lat].to_f,
       lon: result[:lon].to_f,
