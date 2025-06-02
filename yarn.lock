@@ -649,6 +649,10 @@ ansicolors@~0.2.1:
   resolved "https://registry.npmjs.org/ansicolors/-/ansicolors-0.2.1.tgz"
   integrity sha512-tOIuy1/SK/dr94ZA0ckDohKXNeBNqZ4us6PjMVLs5h1w2GBB6uPtOknp2+VF4F/zcy9LI70W+Z+pE2Soajky1w==
 
+"arc@git+https://github.com/springmeyer/arc.js.git#b005df058b010d1c7aaf3aa451516d41294dac0e":
+  version "0.1.0"
+  resolved "git+https://github.com/springmeyer/arc.js.git#b005df058b010d1c7aaf3aa451516d41294dac0e"
+
 async@^2.6.0:
   version "2.6.4"
   resolved "https://registry.npmjs.org/async/-/async-2.6.4.tgz"
@@ -1288,6 +1292,18 @@ jquery-ui@^1.13.2:
   version "3.7.1"
   resolved "https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz"
   integrity sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==
+
+leaflet-arc@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/leaflet-arc/-/leaflet-arc-1.0.2.tgz#b1e2bdb7bc4c382071fd5bffba299793d263f527"
+  integrity sha512-WBmTEjf2O1IH7Ol6XFbv96l5RYVqO8hvUaR+GsL4TcbeMS9u3PHgZWVUF/ay0CG9HWhiHoJAHJ62Itcqduo6qQ==
+  dependencies:
+    arc "git+https://github.com/springmeyer/arc.js.git#b005df058b010d1c7aaf3aa451516d41294dac0e"
+
+leaflet@^1.9.4:
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.9.4.tgz#23fae724e282fa25745aff82ca4d394748db7d8d"
+  integrity sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==
 
 levn@~0.3.0:
   version "0.3.0"

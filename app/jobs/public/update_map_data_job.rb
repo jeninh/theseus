@@ -90,6 +90,8 @@ class Public::UpdateMapDataJob < ApplicationJob
 
     # Use non-exact geocoding to avoid doxing
     result = GeocodingService.geocode_return_address(return_address, exact: false)
+    return nil unless result && result[:lat] && result[:lon]
+    
     {
       lat: result[:lat].to_f,
       lon: result[:lon].to_f,
@@ -99,6 +101,8 @@ class Public::UpdateMapDataJob < ApplicationJob
   def geocode_destination(address)
     # Use non-exact geocoding (city only) to avoid doxing
     result = GeocodingService.geocode_address_model(address, exact: false)
+    return nil unless result && result[:lat] && result[:lon]
+    
     {
       lat: result[:lat].to_f,
       lon: result[:lon].to_f,
@@ -107,7 +111,7 @@ class Public::UpdateMapDataJob < ApplicationJob
 
   def geocode_usps_facility(locale_key, event)
     result = GeocodingService::USPSFacilities.coords_for_locale_key(locale_key, event)
-    return nil unless result
+    return nil unless result && result[:lat] && result[:lon]
 
     {
       lat: result[:lat].to_f,

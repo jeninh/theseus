@@ -18,14 +18,18 @@ module GeocodingService
     def geocode_address_model(address, exact: false)
       Rails.cache.fetch("geocode_address_#{address.id}", expires_in: 5.months) do
         params = {
+          street: address.line_1,
           city: address.city,
           state: address.state,
           postalcode: address.postal_code,
           country: address.country,
         }
-        params[:street] = address.line_1 if exact
 
-        first_hit(params) || FIFTEEN_FALLS
+        result = first_hit(params) || FIFTEEN_FALLS
+        result[:lat] = result[:lat].to_f
+        result[:lon] = result[:lon].to_f
+        result = fuzz_coordinates(result[:lat], result[:lon]) unless exact
+        result
       end
     end
 
@@ -45,6 +49,41 @@ module GeocodingService
 
     def first_hit(params)
       hackclub_geocode(params)
+    end
+
+    def fuzz_coordinates(lat, lon)
+      # Add random offset within 5 mile radius, with minimum of 3 miles for privacy
+      # 1 degree latitude ≈ 69 miles, so 5 miles ≈ 0.0725 degrees
+      # 1 degree longitude varies by latitude, but at ~45°N ≈ 49 miles, so 5 miles ≈ 0.102 degrees
+      max_lat_offset = 0.0725
+      max_lon_offset = 0.102 * Math.cos(lat * Math::PI / 180)
+
+      # Generate random angle and distance within the annular ring (3-5 miles)
+      angle = rand * 2 * Math::PI
+
+      # For uniform distribution in annular ring, we need to account for quadratic area growth
+      # Area of annular ring = π(r_max² - r_min²)
+      # For uniform distribution: rand = (r² - r_min²) / (r_max² - r_min²)
+      # Solving for r: r = sqrt(r_min² + rand * (r_max² - r_min²))
+      min_distance_factor = 0.6  # 3 miles / 5 miles
+      max_distance_factor = 1.0  # 5 miles / 5 miles
+
+      # Calculate distance factor using proper area-based distribution
+      min_squared = min_distance_factor ** 2
+      max_squared = max_distance_factor ** 2
+      distance_factor = Math.sqrt(min_squared + rand * (max_squared - min_squared))
+
+      lat_offset = distance_factor * max_lat_offset * Math.sin(angle)
+      lon_offset = distance_factor * max_lon_offset * Math.cos(angle)
+
+      fuzzed_lat = lat + lat_offset
+      fuzzed_lon = lon + lon_offset
+
+      # Reduce precision to ~100m resolution (3 decimal places)
+      {
+        lat: fuzzed_lat.round(3),
+        lon: fuzzed_lon.round(3),
+      }
     end
 
     def hackclub_geocode(params)
