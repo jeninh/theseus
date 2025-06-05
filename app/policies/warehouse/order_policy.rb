@@ -7,6 +7,8 @@ class Warehouse::OrderPolicy < ApplicationPolicy
     user_can_warehouse
   end
 
+  alias_method :from_template?, :create?
+
   def edit?
     return false unless user_can_warehouse
     record_belongs_to_user || user_is_admin

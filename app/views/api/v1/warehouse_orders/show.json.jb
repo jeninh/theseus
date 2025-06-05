@@ -1,0 +1,3 @@
+{
+  warehouse_order: render(@warehouse_order),
+}

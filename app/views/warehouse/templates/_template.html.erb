@@ -9,10 +9,13 @@
         <%= render 'shared/user_mention', user: template.user %>
       </div>
     </div>
-
     <div class="mt-4">
       <small class="text-muted">Contents:</small>
       <%= render 'warehouse/orders/line_items', order: template %>
+    </div>
+    <div class="mt-4">
+      <small class="text-muted">API ID:</small>
+      <%= template.public_id %>
     </div>
   </div>
 </article>

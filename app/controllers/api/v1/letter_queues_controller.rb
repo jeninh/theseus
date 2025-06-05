@@ -1,6 +1,8 @@
 module API
   module V1
     class LetterQueuesController < ApplicationController
+      include AddressParameterParsing
+
       before_action :set_letter_queue, only: [:show, :create_letter]
       before_action :set_instant_letter_queue, only: [:create_instant_letter, :queued]
 
@@ -36,18 +38,8 @@ module API
       def create_letter
         authorize @letter_queue
 
-        # Normalize country name using FrickinCountryNames
-        country = FrickinCountryNames.find_country(letter_params[:address][:country])
-        if country.nil?
-          render json: { error: "couldn't figure out country name #{letter_params[:address][:country]}" }, status: :unprocessable_entity
-          return
-        end
-
-        # Create address with normalized country
-        address_params = letter_params[:address].merge(country: country.alpha2)
-        # Normalize state name to abbreviation
-        address_params[:state] = FrickinCountryNames.normalize_state(country, address_params[:state])
-        addy = Address.new(address_params)
+        addy = parse_address_from_params(letter_params[:address])
+        return unless addy
 
         @letter = @letter_queue.create_letter!(
           addy,
@@ -62,18 +54,8 @@ module API
       def create_instant_letter
         authorize @letter_queue, policy_class: Letter::QueuePolicy
 
-        # Normalize country name using FrickinCountryNames
-        country = FrickinCountryNames.find_country(letter_params[:address][:country])
-        if country.nil?
-          render json: { error: "couldn't figure out country name #{letter_params[:address][:country]}" }, status: :unprocessable_entity
-          return
-        end
-
-        # Create address with normalized country
-        address_params = letter_params[:address].merge(country: country.alpha2)
-        # Normalize state name to abbreviation
-        address_params[:state] = FrickinCountryNames.normalize_state(country, address_params[:state])
-        addy = Address.new(address_params)
+        addy = parse_address_from_params(letter_params[:address])
+        return unless addy
 
         @letter = @letter_queue.process_letter_instantly!(
           addy,
@@ -117,11 +99,6 @@ module API
             :country,
           ],
         )
-      end
-
-      def normalize_country(country)
-        return "US" if country.blank? || country.downcase == "usa" || country.downcase == "united states"
-        country
       end
     end
   end

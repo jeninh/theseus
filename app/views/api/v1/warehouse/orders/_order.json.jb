@@ -1,0 +1,18 @@
+{
+  id: order.hc_id,
+  status: order.aasm_state,
+  tags: order.tags,
+  address: render(order.address),
+  metadata: order.metadata || {},
+  recipient_email: order.recipient_email,
+  dispatched_at: order.dispatched_at,
+  mailed_at: order.mailed_at,
+  tracking_number: order.tracking_number,
+  carrier: order.carrier,
+  service: order.service,
+  weight: order.weight,
+  contents_cost: order.contents_cost,
+  labor_cost: order.labor_cost,
+  postage_cost: order.postage_cost,
+  idempotency_key: order.idempotency_key,
+}.compact_blank

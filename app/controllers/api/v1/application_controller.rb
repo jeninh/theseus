@@ -27,6 +27,10 @@ module API
         render json: { error: "idempotency_error", messages: ["a record by that idempotency key already exists!"] }, status: :bad_request
       end
 
+      rescue_from ActionController::ParameterMissing do |e|
+        render json: { error: "missing_parameter", messages: [e.message] }, status: :bad_request
+      end
+
       private
 
       def set_expand

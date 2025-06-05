@@ -682,6 +682,11 @@ Rails.application.routes.draw do
             get :letters
           end
         end
+        resources :warehouse_orders, only: [:show, :index, :create] do
+          collection do
+            post "from_template/:template_id", to: "warehouse_orders#from_template", as: :from_template
+          end
+        end
       end
     end
   end

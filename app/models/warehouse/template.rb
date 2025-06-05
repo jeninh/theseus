@@ -22,6 +22,10 @@
 #
 class Warehouse::Template < ApplicationRecord
   include HasWarehouseLineItems
+  include PublicIdentifiable
+
+  set_public_id_prefix "wot"
+
   scope :shared, -> { where(public: true) }
 
   belongs_to :user

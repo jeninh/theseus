@@ -10,10 +10,10 @@
 SourceTag.find_or_create_by!(
   name: "Theseus web interface",
   slug: "theseus_web",
-  owner: "Nora"
+  owner: "Nora",
 )
 
-Warehouse::PurposeCode.find_or_create_by!(
-  code: Rails.env.production? ? 'HQ' : 'HQ-dev',
-  description: 'general HQ mailing'
-)
+# Warehouse::PurposeCode.find_or_create_by!(
+#   code: Rails.env.production? ? 'HQ' : 'HQ-dev',
+#   description: 'general HQ mailing'
+# )
