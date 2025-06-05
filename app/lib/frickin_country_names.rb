@@ -6,6 +6,8 @@ module FrickinCountryNames
     SILLY_LOOKUP_TABLE = {
       "hong kong sar" => "HK",
       "россия" => "RU",
+      "south korea" => "KR",
+      "austria" => "AT",
     }
     UNSTATABLE_COUNTRIES = %w[EG SG]
 
