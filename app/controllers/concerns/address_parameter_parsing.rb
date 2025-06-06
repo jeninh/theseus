@@ -6,7 +6,6 @@ module AddressParameterParsing
   def parse_address_from_params(address_params)
     return nil if address_params.blank?
 
-    Address.new(address_params).validate!
 
     # Normalize country name using FrickinCountryNames
     country = FrickinCountryNames.find_country(address_params[:country])
@@ -20,7 +19,9 @@ module AddressParameterParsing
     # Normalize state name to abbreviation
     normalized_address_params[:state] = FrickinCountryNames.normalize_state(country, normalized_address_params[:state])
 
-    Address.new(normalized_address_params)
+    addy = Address.new(normalized_address_params)
+    addy.validate!
+    addy
   end
 
   def permit_address_params
