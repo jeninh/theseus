@@ -18,11 +18,11 @@ module AirtableETL
       when :letters
         recs.each do |rec|
           public_id = rec[field_map[:public_id]]
-
+          next unless public_id.present?
           letter = Letter.find_by_public_id(public_id)
           if letter.nil?
             Rails.logger.error("Letter not found for public_id: #{public_id}")
-            # rec[field_map[:aasm_state]] = "not_found"
+            rec[field_map[:aasm_state]] = "not_found"
             next
           end
 
