@@ -40,5 +40,9 @@ Rails.application.configure do
       cron: "*/22 * * * *",
       class: "AirtableETL::AthenaStickersETLJob",
     },
+    hcb_welcome_etl: {
+      cron: "*/23 * * * *",
+      class: "AirtableETL::HCBWelcomeETLJob",
+    },
   }
 end
