@@ -61,7 +61,7 @@ class Address < ApplicationRecord
 
   def snailify(origin = "US")
     SnailButNbsp.new(
-      name: name_line,
+      name: name_line.gsub(" ", " "),
       line_1:,
       line_2: line_2.presence,
       city:,
