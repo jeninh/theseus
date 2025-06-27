@@ -277,7 +277,7 @@ class Letter < ApplicationRecord
           )
         end
       when "stamps"
-        if %i(queued pending).include?(aasm.current_state)
+        if %i(queued).include?(aasm.current_state)
           return 0
         end
         # For stamps, use stamp price for US and desired price for international
