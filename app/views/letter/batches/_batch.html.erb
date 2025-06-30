@@ -13,7 +13,7 @@
         </div>
         <div class="text-sm mb-3">
           <span class="text-gray-500">Letters:</span>
-          <%= @batch.addresses.count %>
+          <%= @batch.letters.count %>
         </div>
         <% if @batch.user_facing_title.present? %>
           <div class="text-sm mb-3">
@@ -21,6 +21,10 @@
             <%= @batch.user_facing_title %>
           </div>
         <% end %>
+        <div class="text-sm mb-3">
+          <span class="text-gray-500">Total postage cost:</span>
+          <%= @batch.postage_cost %>
+        </div>
       </div>
 
       <div class="col-md-6">

@@ -3,7 +3,7 @@
   <div class="page-header">
     <h1 class="page-title">
       Letter Batch #<%= @batch.id %>
-      <small>(<%= pluralize(@batch.addresses.count, 'letter') %>)</small>
+      <small>(<%= pluralize(@batch.letters.count, 'letter') %>)</small>
     </h1>
     <div class="actions">
       <%= secondary_link_to "Back to batches", letter_batches_path do %>
