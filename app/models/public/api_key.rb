@@ -25,6 +25,7 @@ class Public::APIKey < ApplicationRecord
   belongs_to :public_user, class_name: "Public::User"
 
   validates :token, presence: true, uniqueness: true
+  validates :name, length: { maximum: 100 }
 
   scope :not_revoked, -> { where(revoked_at: nil).or(where(revoked_at: Time.now..)) }
   scope :accessible, -> { not_revoked }
