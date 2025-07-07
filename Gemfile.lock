@@ -379,14 +379,15 @@ GEM
       racc
     pdf-core (0.10.0)
     pg (1.5.9)
-    phlex (2.2.1)
+    phlex (2.3.1)
       zeitwerk (~> 2.7)
     phlex-pdf (0.1.2)
       matrix (~> 0.4)
       prawn (~> 2.0)
-    phlex-rails (2.2.0)
-      phlex (~> 2.2.1)
+    phlex-rails (2.3.1)
+      phlex (~> 2.3.0)
       railties (>= 7.1, < 9)
+      zeitwerk (~> 2.7)
     pkg-config (1.6.2)
     pp (0.6.2)
       prettyprint
@@ -678,7 +679,7 @@ DEPENDENCIES
   parallel (~> 1.26)
   pg (~> 1.1)
   phlex-pdf (~> 0.1.2)
-  phlex-rails (~> 2.2)
+  phlex-rails (~> 2.3)
   prawn (~> 2.5)
   propshaft
   puma (>= 5.0)
