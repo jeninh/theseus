@@ -17,6 +17,7 @@ module SnailMail
           "imb" => { normal: font_path("imb.ttf") },
           "gohu" => { normal: font_path("gohu.ttf") },
           "noto" => { normal: font_path("noto sans regular.ttf") },
+          "times" => { normal: font_path("times.ttf") },
         )
       end
 
