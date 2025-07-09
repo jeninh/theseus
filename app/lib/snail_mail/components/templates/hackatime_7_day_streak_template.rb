@@ -28,7 +28,7 @@ module SnailMail
           ca = Date.parse(ca) rescue nil if ca.present?
 
           text = <<~EOM
-            Dearest #{letter.address.first_name.upcase} #{letter.address.last_name[0]&.upcase}.,
+            Dearest #{letter.address&.first_name&.upcase} #{letter.address&.last_name[0]&.upcase}.,
 
             #{ca.present? ? "On the #{ca.day.ordinalize} of #{Date::MONTHNAMES[ca.month]}" : "Recently"} you joined the ranks of those who have logged coding time on Hackatime 7 days in a row.
 
