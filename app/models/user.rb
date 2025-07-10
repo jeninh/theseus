@@ -39,17 +39,11 @@ class User < ApplicationRecord
 
   set_public_id_prefix "usr"
 
-  def admin?
-    is_admin
-  end
+  def admin? = is_admin
 
-  def make_admin!
-    update!(is_admin: true)
-  end
+  def make_admin! = update!(is_admin: true)
 
-  def remove_admin!
-    update!(is_admin: false)
-  end
+  def remove_admin! = update!(is_admin: false)
 
   def self.authorize_url(redirect_uri)
     params = {

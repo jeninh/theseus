@@ -73,9 +73,7 @@ class Letter::Batch < Batch
 
   after_update :update_letter_tags, if: :saved_change_to_tags?
 
-  def self.model_name
-    Batch.model_name
-  end
+  def self.model_name = Batch.model_name
 
   # Directly attach a PDF to this batch
   def attach_pdf(pdf_data)
@@ -169,10 +167,6 @@ class Letter::Batch < Batch
     end
   end
 
-  def total_cost
-    postage_cost
-  end
-
   def postage_cost
     # Preload associations to avoid N+1 queries
     letters.includes(:address, :usps_indicium).sum do |letter|
@@ -214,6 +208,8 @@ class Letter::Batch < Batch
       end
     end
   end
+
+  alias_method :total_cost, :postage_cost
 
   def postage_cost_difference(us_postage_type: nil, intl_postage_type: nil)
     # Preload associations to avoid N+1 queries

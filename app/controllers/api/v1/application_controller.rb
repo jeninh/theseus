@@ -37,9 +37,7 @@ module API
         @expand = params[:expand].to_s.split(",").map { |e| e.strip.to_sym }
       end
 
-      def set_pii
-        @pii = current_token&.pii?
-      end
+      def set_pii = @pii = current_token&.pii?
 
       def authenticate!
         @current_token = authenticate_with_http_token { |t, _options| APIKey.find_by(token: t) }

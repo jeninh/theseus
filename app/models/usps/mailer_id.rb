@@ -12,17 +12,11 @@
 #  updated_at      :datetime         not null
 #
 class USPS::MailerId < ApplicationRecord
-  def display_name
-    "#{name} (#{crid}/#{mid})"
-  end
+  def display_name = "#{name} (#{crid}/#{mid})"
 
-  def sn_length
-    15 - mid.length
-  end
+  def sn_length = 15 - mid.length
 
-  def max_sn
-    (10**sn_length) - 1
-  end
+  def max_sn = (10 ** sn_length) - 1
 
   def next_sn_and_rollover
     transaction do
@@ -36,6 +30,6 @@ class USPS::MailerId < ApplicationRecord
       end
       save!
     end
-    [ sequence_number, rollover_count ]
+    [sequence_number, rollover_count]
   end
 end

@@ -1,12 +1,8 @@
 module LSV
   class Base < Norairrecord::Table
-    def inspect
-      "<#{self.class.name} #{id}> #{fields.inspect}"
-    end
+    def inspect = "<#{self.class.name} #{id}> #{fields.inspect}"
 
-    def to_partial_path
-      "lsv/type/base"
-    end
+    def to_partial_path = "lsv/type/base"
 
     class << self
       def responsible_class
@@ -25,9 +21,7 @@ module LSV
         super
       end
 
-      def email_column
-        responsible_class.instance_variable_get(:@email_column)
-      end
+      def email_column = responsible_class.instance_variable_get(:@email_column)
 
       attr_writer :email_column
 
@@ -37,49 +31,26 @@ module LSV
       end
     end
 
-    def tracking_number
-      nil
-    end
+    def tracking_number = nil
+    def tracking_link = nil
 
-    def tracking_link
-      nil
-    end
 
-    def status_text
-      "error fetching status! poke nora"
-    end
+    def status_text = "error fetching status! poke nora"
 
-    def source_url
-      fields.dig("source_rec_url", "url")
-    end
+    def source_url = fields.dig("source_rec_url", "url")
+    def source_id = source_url&.split("/").last
 
-    def source_id
-      source_url&.split("/").last
-    end
+    def icon = "📦"
 
-    def icon
-      "📦"
-    end
+    def hide_contents? = false
 
-    def hide_contents?
-      false
-    end
+    def status_icon = "?"
 
-    def status_icon
-      "?"
-    end
+    def shipped? = nil
 
-    def shipped?
-      nil
-    end
+    def description = nil
 
-    def description
-      nil
-    end
-
-    def email
-      fields[self.class.email_column]
-    end
+    def email = fields[self.class.email_column]
 
     def to_json(options = {})
       {
@@ -97,8 +68,6 @@ module LSV
       }.compact.to_json
     end
 
-    def to_param
-      id
-    end
+    alias_method :to_param, :id
   end
 end

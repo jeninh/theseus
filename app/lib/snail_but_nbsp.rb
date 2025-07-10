@@ -4,7 +4,5 @@
 #
 # that way we don't linebreak in the middle of a zipcode when we render out in Prawn!
 class SnailButNbsp < Snail
-  def city_line
-    super.tr(" -", " –")
-  end
+  def city_line = super.tr(" -", " –")
 end

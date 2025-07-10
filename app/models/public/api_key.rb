@@ -37,21 +37,13 @@ class Public::APIKey < ApplicationRecord
   has_encrypted :token
   blind_index :token
 
-  def revoke!
-    update!(revoked_at: Time.now)
-  end
+  def revoke! = update!(revoked_at: Time.now)
 
-  def revoked?
-    revoked_at.present?
-  end
+  def revoked? = revoked_at.present?
 
-  def active?
-    !revoked?
-  end
+  def active? = !revoked?
 
-  def abbreviated
-    "#{token[..15]}.....#{token[-4..]}"
-  end
+  def abbreviated = "#{token[..15]}.....#{token[-4..]}"
 
   private
 

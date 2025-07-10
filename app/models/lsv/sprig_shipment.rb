@@ -4,17 +4,11 @@ module LSV
     self.table_name = Rails.application.credentials.dig(:lsv, :sprig_table)
     self.email_column = "Email"
 
-    def title_text
-      "Sprig!"
-    end
+    def title_text = "Sprig!"
 
-    def type_text
-      "Sprig shipment"
-    end
+    def type_text = "Sprig shipment"
 
-    def date
-      fields["Created At"]
-    end
+    def date = fields["Created At"]
 
     def status_text
       if shipped?
@@ -32,24 +26,13 @@ module LSV
       end
     end
 
-    def tracking_link
-      fields["Tracking"] && "#{(fields["Tracking Base Link"] || "https://parcelsapp.com/en/tracking/")}#{fields["Tracking"]}"
-    end
+    def tracking_link = fields["Tracking"] && "#{(fields["Tracking Base Link"] || "https://parcelsapp.com/en/tracking/")}#{fields["Tracking"]}"
+    def tracking_number = fields["Tracking"]
 
-    def tracking_number
-      fields["Tracking"]
-    end
+    def icon = "🌱"
 
-    def icon
-      "🌱"
-    end
+    def shipped? = fields["Sprig Status"] == "Shipped"
 
-    def shipped?
-      fields["Sprig Status"] == "Shipped"
-    end
-
-    def description
-      "a #{fields["Color"]&.downcase.concat " "}Sprig!"
-    end
+    def description = "a #{fields["Color"]&.downcase.concat " "}Sprig!"
   end
 end

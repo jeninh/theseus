@@ -1,24 +1,18 @@
 module LSV
   class MarketingShipmentRequest < Base
-    def to_partial_path
-      "lsv/type/msr"
-    end
+    def to_partial_path = "lsv/type/msr"
 
     self.base_key = Rails.application.credentials.dig(:lsv, :sv_base)
     self.table_name = Rails.application.credentials.dig(:lsv, :msr_table)
     self.email_column = "Email"
 
-    def type_text
-      "Warehouse"
-    end
+    def type_text = "Warehouse"
 
     def title_text
       fields["user_facing_title"] || fields["Request Type"]&.join(", ") || "Who knows?"
     end
 
-    def date
-      self["Date Requested"]
-    end
+    def date = self["Date Requested"]
 
     def status_text
       case fields["state"]
@@ -54,9 +48,7 @@ module LSV
       fields["Warehouse–Tracking Number"] unless fields["Warehouse–Tracking Number"] == "Not Provided"
     end
 
-    def hide_contents?
-      fields["surprise"]
-    end
+    def hide_contents? = fields["surprise"]
 
     def country
       FrickinCountryNames.find_country(fields["Country"])&.alpha2 || "US"
@@ -69,9 +61,7 @@ module LSV
       "📦"
     end
 
-    def shipped?
-      fields["state"] == "mailed"
-    end
+    def shipped? = fields["state"] == "mailed"
 
     def description
       return "it's a surprise!" if hide_contents?

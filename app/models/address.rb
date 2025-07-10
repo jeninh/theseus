@@ -34,17 +34,13 @@ class Address < ApplicationRecord
     "\u200B", # ZERO WIDTH SPACE
   ].join
 
-  def self.strip_gremlins(str)
-    str&.delete(GREMLINS)&.presence
-  end
+  def self.strip_gremlins(str) = str&.delete(GREMLINS)&.presence
 
   validates_presence_of :first_name, :line_1, :city, :state, :postal_code, :country
 
   before_validation :strip_gremlins_from_fields
 
-  def name_line
-    [first_name, last_name].join(" ")
-  end
+  def name_line = [first_name, last_name].join(" ")
 
   def us_format
     <<~EOA
@@ -55,9 +51,7 @@ class Address < ApplicationRecord
     EOA
   end
 
-  def us?
-    country == "US"
-  end
+  def us? = country == "US"
 
   def snailify(origin = "US")
     SnailButNbsp.new(

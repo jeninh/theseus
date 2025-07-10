@@ -27,9 +27,8 @@
 #
 class USPS::IVMTR::Event < ApplicationRecord
   include PublicIdentifiable
-  set_public_id_prefix 'mtr'
+  set_public_id_prefix "mtr"
 
-  
   belongs_to :letter, optional: true
   belongs_to :batch, class_name: "USPS::IVMTR::RawJSONBatch"
   belongs_to :mailer_id, class_name: "USPS::MailerId"
@@ -39,63 +38,36 @@ class USPS::IVMTR::Event < ApplicationRecord
   scope :bogons, -> { where(letter_id: nil) }
   scope :by_scan_datetime, -> { order(scan_datetime: :desc) }
 
-  def bogon?
-    letter.nil?
-  end
+  def bogon? = letter.nil?
 
   def hydrated
     @h ||= IvyMeter::Event::PieceEvent.from_json(payload || {})
   end
 
-  def scan_datetime
-    hydrated.scan_datetime
-  end
+  def scan_datetime = hydrated.scan_datetime
 
   def scan_facility
     {
       name: hydrated.scan_facility_name,
       city: hydrated.scan_facility_city,
       state: hydrated.scan_facility_state,
-      zip: hydrated.scan_facility_zip
+      zip: hydrated.scan_facility_zip,
     }
   end
 
-  def mail_phase
-    hydrated.mail_phase
-  end
-
-  def scan_event_code
-    hydrated.scan_event_code
-  end
-
-  def handling_event_type
-    hydrated.handling_event_type
-  end
-
-  def handling_event_type_description
-    hydrated.handling_event_type_description
-  end
-
-  def imb_serial_number
-    hydrated.imb_serial_number
-  end
-
-  def imb_mid
-    hydrated.imb_mid
-  end
-
-  def imb_stid
-    hydrated.imb_stid
-  end
-
-  def imb
-    hydrated.imb
-  end
+  def mail_phase = hydrated.mail_phase
+  def scan_event_code = hydrated.scan_event_code
+  def handling_event_type = hydrated.handling_event_type
+  def handling_event_type_description = hydrated.handling_event_type_description
+  def imb_serial_number = hydrated.imb_serial_number
+  def imb_mid = hydrated.imb_mid
+  def imb_stid = hydrated.imb_stid
+  def imb = hydrated.imb
 
   def machine_info
     {
       name: hydrated.machine_name,
-      id: hydrated.machine_id
+      id: hydrated.machine_id,
     }
   end
 
@@ -110,13 +82,11 @@ class USPS::IVMTR::Event < ApplicationRecord
       letter_id: letter&.id,
       happened_at: event.scan_datetime,
       opcode: event.scan_event_code,
-      zip_code: event.scan_facility_zip
+      zip_code: event.scan_facility_zip,
     )
   end
 
   private
 
-  def notify_slack
-    USPS::IVMTR::NotifySlackJob.perform_later(self)
-  end
+  def notify_slack = USPS::IVMTR::NotifySlackJob.perform_later(self)
 end

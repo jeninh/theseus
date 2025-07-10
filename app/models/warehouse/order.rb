@@ -239,13 +239,9 @@ class Warehouse::Order < ApplicationRecord
     @tracking_format ||= Tracking.get_format_by_zenv_info(carrier:, service:)
   end
 
-  def tracking_url
-    Tracking.tracking_url_for(tracking_format, tracking_number)
-  end
+  def tracking_url = Tracking.tracking_url_for(tracking_format, tracking_number)
 
-  def might_be_slow?
-    %i[asendia usps].include?(tracking_format)
-  end
+  def might_be_slow? = %i[asendia usps].include?(tracking_format)
 
   def pretty_via
     case tracking_format
@@ -328,19 +324,13 @@ class Warehouse::Order < ApplicationRecord
     item_hash
   end
 
-  def total_cost
-    [contents_cost, labor_cost, postage_cost].compact_blank.sum
-  end
+  def total_cost = [contents_cost, labor_cost, postage_cost].compact_blank.sum
 
-  def to_param
-    hc_id
-  end
+  def to_param = hc_id
 
   private
 
-  def set_hc_id
-    update_column(:hc_id, public_id)
-  end
+  def set_hc_id = update_column(:hc_id, public_id)
 
   def update_costs
     # Ensure line items are loaded and include their SKUs

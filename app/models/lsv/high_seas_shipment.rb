@@ -12,17 +12,11 @@ module LSV
       ["agh_random_stickers"] => "LSV::HsRawPendingAghShipment",
     }
 
-    def type_text
-      "High Seas order"
-    end
+    def type_text = "High Seas order"
 
-    def title_text
-      "High Seas – #{fields["shop_item:name"] || "unknown?!"}"
-    end
+    def title_text = "High Seas – #{fields["shop_item:name"] || "unknown?!"}"
 
-    def date
-      self["created_at"]
-    end
+    def date = self["created_at"]
 
     def status_text
       case fields["status"]
@@ -52,25 +46,17 @@ module LSV
       end
     end
 
-    def tracking_number
-      fields["tracking_number"]
-    end
+    def tracking_number = fields["tracking_number"]
 
-    def tracking_link
-      tracking_number && "https://parcelsapp.com/en/tracking/#{tracking_number}"
-    end
+    def tracking_link = tracking_number && "https://parcelsapp.com/en/tracking/#{tracking_number}"
 
     def icon
       return "🎁" if fields["shop_item:name"]&.start_with? "Free"
       super
     end
 
-    def shipped?
-      fields["status"] == "fulfilled"
-    end
+    def shipped? = fields["status"] == "fulfilled"
 
-    def internal_info_partial
-      :_highseas_internal_info
-    end
+    def internal_info_partial = :_highseas_internal_info
   end
 end

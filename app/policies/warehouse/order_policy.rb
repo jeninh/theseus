@@ -1,11 +1,7 @@
 class Warehouse::OrderPolicy < ApplicationPolicy
-  def new?
-    user_can_warehouse
-  end
+  def new? = user_can_warehouse
 
-  def create?
-    user_can_warehouse
-  end
+  alias_method :create?, :new?
 
   alias_method :from_template?, :create?
 
@@ -14,10 +10,7 @@ class Warehouse::OrderPolicy < ApplicationPolicy
     record_belongs_to_user || user_is_admin
   end
 
-  def update?
-    return false unless user_can_warehouse
-    record_belongs_to_user || user_is_admin
-  end
+  alias_method :update?, :edit?
 
   def show?
     user_can_warehouse

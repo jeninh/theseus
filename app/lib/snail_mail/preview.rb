@@ -15,9 +15,7 @@ module SnailMail
         EOA
       end
 
-      def us?
-        country == "US"
-      end
+      def us? = country == "US"
 
       def snailify(origin = "US")
         SnailButNbsp.new(

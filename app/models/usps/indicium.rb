@@ -83,17 +83,11 @@ class USPS::Indicium < ApplicationRecord
     save
   end
 
-  def cost
-    (postage || 0) + (fees || 0)
-  end
+  def cost = (postage || 0) + (fees || 0)
 
-  def svg
-    Base64.decode64(raw_json_response["indiciaImage"])
-  end
+  def svg = Base64.decode64(raw_json_response["indiciaImage"])
 
   private
 
-  def usps_proc_cat(sym)
-    sym.to_s.pluralize.upcase
-  end
+  def usps_proc_cat(sym) = sym.to_s.pluralize.upcase
 end

@@ -41,9 +41,7 @@ class ReturnAddress < ApplicationRecord
   # Add an attribute accessor for the from_letter parameter
   attr_accessor :from_letter
 
-  def display_name
-    "#{name} / #{line_1}"
-  end
+  def display_name = "#{name} / #{line_1}"
 
   def format_for_country(other_country)
     <<~EOA
@@ -55,13 +53,9 @@ class ReturnAddress < ApplicationRecord
       .strip
   end
 
-  def location
-    "#{city}, #{state} #{postal_code} #{country}"
-  end
+  def location = "#{city}, #{state} #{postal_code} #{country}"
 
-  def us?
-    country == "US"
-  end
+  def us? = country == "US"
 
   private
 

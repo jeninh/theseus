@@ -1,8 +1,6 @@
 module LSV
   class HsRawPendingAghShipment < HighSeasShipment
-    def type_text
-      "Pending warehouse shipment"
-    end
+    def type_text = "Pending warehouse shipment"
 
     def status_text
       case fields["status"]

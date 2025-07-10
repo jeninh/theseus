@@ -13,7 +13,5 @@ class Public::User < ApplicationRecord
 
   set_public_id_prefix :uzr
 
-  def create_login_code
-    login_codes.create!
-  end
+  def create_login_code = login_codes.create!
 end

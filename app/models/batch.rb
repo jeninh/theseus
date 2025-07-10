@@ -92,13 +92,9 @@ class Batch < ApplicationRecord
     end
   end
 
-  def attach_pdf(pdf_data)
-    PdfAttachmentUtil.attach_pdf(pdf_data, self, :pdf_document)
-  end
+  def attach_pdf(pdf_data) = PdfAttachmentUtil.attach_pdf(pdf_data, self, :pdf_document)
 
-  def total_cost
-    raise NotImplementedError, "Subclasses must implement total_cost"
-  end
+  def total_cost = raise NotImplementedError, "Subclasses must implement total_cost"
 
   GREMLINS = [
     "‎",

@@ -47,9 +47,7 @@ class Warehouse::Batch < Batch
 
   has_many :orders, class_name: "Warehouse::Order"
 
-  def self.model_name
-    Batch.model_name
-  end
+  def self.model_name = Batch.model_name
 
   def process!(options = {})
     return false unless fields_mapped?
@@ -82,25 +80,15 @@ class Warehouse::Batch < Batch
     address
   end
 
-  def contents_cost
-    warehouse_template.contents_actual_cost_to_hc * addresses.count
-  end
+  def contents_cost = warehouse_template.contents_actual_cost_to_hc * addresses.count
 
-  def labor_cost
-    warehouse_template.labor_cost * addresses.count
-  end
+  def labor_cost = warehouse_template.labor_cost * addresses.count
 
-  def postage_cost
-    orders.sum(:postage_cost)
-  end
+  def postage_cost = orders.sum(:postage_cost)
 
-  def total_cost
-    contents_cost + labor_cost + postage_cost
-  end
+  def total_cost = contents_cost + labor_cost + postage_cost
 
-  def update_associated_tags
-    orders.update_all(tags: tags)
-  end
+  def update_associated_tags = orders.update_all(tags:)
 
   def process_with_zenventory!(options = {})
     return false unless fields_mapped?

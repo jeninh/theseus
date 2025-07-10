@@ -7,13 +7,9 @@ module Taggable
     after_save :update_tag_cache, if: :saved_change_to_tags?
   end
 
-  def zap_empty_tags
-    tags.reject!(&:blank?)
-  end
+  def zap_empty_tags = tags.reject!(&:blank?)
 
   private
 
-  def update_tag_cache
-    UpdateTagCacheJob.perform_later
-  end
+  def update_tag_cache = UpdateTagCacheJob.perform_later
 end

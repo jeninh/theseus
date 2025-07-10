@@ -8,63 +8,34 @@ class BatchPolicy < ApplicationPolicy
     user_can_warehouse && record_belongs_to_user
   end
 
-  def new?
-    user_can_warehouse
-  end
+  def new? = user_can_warehouse
 
-  def create?
-    user_can_warehouse
-  end
+  alias_method :create?, :new?
 
   def edit?
     return true if user_is_admin
     user_can_warehouse && record_belongs_to_user
   end
 
-  def update?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :update?, :edit?
 
   def destroy?
     return true if user_is_admin
     user_can_warehouse && record_belongs_to_user
   end
 
-  def map_fields?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :map_fields?, :edit?
 
-  def set_mapping?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :set_mapping?, :map_fields?
 
-  def process_batch?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :process_batch?, :map_fields?
+  alias_method :process_form?, :process_batch?
 
-  def process_form?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :mark_printed?, :update?
 
-  def mark_printed?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :mark_mailed?, :mark_printed?
 
-  def mark_mailed?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
-
-  def update_costs?
-    return true if user_is_admin
-    user_can_warehouse && record_belongs_to_user
-  end
+  alias_method :update_costs?, :show?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
@@ -86,7 +57,5 @@ class BatchPolicy < ApplicationPolicy
 
   private
 
-  def record_belongs_to_user
-    user && record.user == user
-  end
+  def record_belongs_to_user = user && record.user == user
 end

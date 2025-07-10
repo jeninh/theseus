@@ -31,13 +31,9 @@ class Public::LoginCode < ApplicationRecord
 
   TOKEN = ExternalToken.new("lc")
 
-  def mark_used!
-    update!(used_at: Time.current)
-  end
+  def mark_used! = update!(used_at: Time.current)
 
-  def to_param
-    token
-  end
+  def to_param = token
 
   private
 

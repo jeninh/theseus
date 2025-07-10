@@ -113,24 +113,16 @@ module SnailMail
     end
 
     # List available templates
-    def self.available_templates
-      Components::Registry.available_templates.uniq
-    end
+    def self.available_templates = Components::Registry.available_templates.uniq
 
     # Get a list of all templates with their metadata
-    def self.template_info
-      Components::Registry.template_info
-    end
+    def self.template_info = Components::Registry.template_info
 
     # Get templates for a specific size
-    def self.templates_for_size(size)
-      Components::Registry.templates_for_size(size)
-    end
+    def self.templates_for_size(size) = Components::Registry.templates_for_size(size)
 
     # Get the default template
-    def self.default_template
-      Components::Registry.default_template
-    end
+    def self.default_template = Components::Registry.default_template
 
     # Check if templates exist
     def self.templates_exist?(template_names)

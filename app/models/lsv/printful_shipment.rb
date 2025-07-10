@@ -4,29 +4,19 @@ module LSV
     self.table_name = Rails.application.credentials.dig(:lsv, :pf_table)
     self.email_column = "%order:recipient:email"
 
-    def to_partial_path
-      "lsv/type/printful_shipment"
-    end
+    def to_partial_path = "lsv/type/printful_shipment"
 
     has_subtypes "subtype", {
       "mystic_tavern" => "LSV::MysticTavernShipment",
     }
 
-    def date
-      fields["created"] || Date.parse(fields["%order:created"]).iso8601
-    end
+    def date = fields["created"] || Date.parse(fields["%order:created"]).iso8601
 
-    def title_text
-      "something custom!"
-    end
+    def title_text = "something custom!"
 
-    def type_text
-      "Printful shipment"
-    end
+    def type_text = "Printful shipment"
 
-    def icon
-      "🧢"
-    end
+    def icon = "🧢"
 
     def status_text
       case fields["status"]
@@ -41,9 +31,7 @@ module LSV
       end
     end
 
-    def shipped?
-      fields["status"] == "shipped"
-    end
+    def shipped? = fields["status"] == "shipped"
 
     def status_icon
       if shipped?
@@ -64,17 +52,11 @@ module LSV
       end
     end
 
-    def tracking_number
-      fields["tracking_number"]
-    end
+    def tracking_number = fields["tracking_number"]
 
-    def tracking_link
-      fields["tracking_url"] if tracking_number
-    end
+    def tracking_link = (fields["tracking_url"] if tracking_number)
 
-    def internal_info_partial
-      :_printful_internal_info
-    end
+    def internal_info_partial = :_printful_internal_info
 
     private
 
@@ -86,16 +68,10 @@ module LSV
   end
 
   class MysticTavernShipment < PrintfulShipment
-    def title_text
-      "Mystic Tavern shirts!"
-    end
+    def title_text = "Mystic Tavern shirts!"
 
-    def type_text
-      "arrrrrrrrrrrrr"
-    end
+    def type_text = "arrrrrrrrrrrrr"
 
-    def icon
-      "��"
-    end
+    def icon = "��"
   end
 end

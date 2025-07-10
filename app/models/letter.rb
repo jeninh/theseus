@@ -98,17 +98,11 @@ class Letter < ApplicationRecord
     end
   end
 
-  def display_name
-    user_facing_title || tags.compact_blank.join(", ") || public_id
-  end
+  def display_name = user_facing_title || tags.compact_blank.join(", ") || public_id
 
-  def return_address_name_line
-    return_address_name.presence || return_address&.name
-  end
+  def return_address_name_line = return_address_name.presence || return_address&.name
 
-  def been_mailed?
-    mailed? || received?
-  end
+  def been_mailed? = mailed? || received?
 
   belongs_to :usps_mailer_id, class_name: "USPS::MailerId"
 
@@ -210,9 +204,7 @@ class Letter < ApplicationRecord
     end
   end
 
-  def to_param
-    self.public_id
-  end
+  alias_method :to_param, :public_id
 
   def events
     iv = iv_mtr_events.map do |event|

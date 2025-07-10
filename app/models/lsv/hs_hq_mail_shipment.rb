@@ -1,8 +1,6 @@
 module LSV
   class HsHqMailShipment < HighSeasShipment
-    def type_text
-      "High Seas shipment (from HQ)"
-    end
+    def type_text = "High Seas shipment (from HQ)"
 
     def status_text
       case fields["status"]

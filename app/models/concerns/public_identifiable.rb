@@ -9,9 +9,7 @@ module PublicIdentifiable
     class_attribute :public_id_prefix
   end
 
-  def public_id
-    "#{self.public_id_prefix}!#{hashid}"
-  end
+  def public_id = "#{self.public_id_prefix}!#{hashid}"
 
   module ClassMethods
     def set_public_id_prefix(prefix)

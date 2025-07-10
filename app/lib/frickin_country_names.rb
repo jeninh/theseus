@@ -27,9 +27,7 @@ module FrickinCountryNames
       country
     end
 
-    def find_state(country, string_to_ponder)
-      country&.find_subdivision_by_any_name(string_to_ponder)
-    end
+    def find_state(country, string_to_ponder) = country&.find_subdivision_by_any_name(string_to_ponder)
 
     def find_state!(country, string_to_ponder)
       state = find_state(country, string_to_ponder)
@@ -53,12 +51,8 @@ module ISO3166
       end.values.first
     end
 
-    def stupid_compare(arr, val)
-      arr.map { |s| tldc(s) }.include?(val)
-    end
+    def stupid_compare(arr, val) = arr.map { |s| tldc(s) }.include?(val)
 
-    def tldc(s)
-      ActiveSupport::Inflector.transliterate(s.strip).downcase
-    end
+    def tldc(s) = ActiveSupport::Inflector.transliterate(s.strip).downcase
   end
 end

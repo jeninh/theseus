@@ -22,8 +22,6 @@ module LSV
       end
     end
 
-    def icon
-      "��"
-    end
+    def icon = "��"
   end
 end

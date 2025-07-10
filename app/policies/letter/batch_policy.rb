@@ -1,59 +1,27 @@
 class Letter::BatchPolicy < ApplicationPolicy
-  def index?
-    user.present?
-  end
+  def index? = user.present?
 
-  def show?
-    user.present?
-  end
+  def show? = user.present?
 
-  def new?
-    user.present?
-  end
+  def new? = user.present?
 
-  def create?
-    user.present?
-  end
+  def create? = user.present?
 
-  def edit?
-    user.present?
-  end
+  def edit? = user.present?
 
-  def update?
-    user.present?
-  end
+  alias_method :update?, :edit?
 
-  def destroy?
-    user.admin?
-  end
+  def destroy? = user.admin?
 
-  def map_fields?
-    user.present?
-  end
+  def map_fields? = user.present?
 
-  def set_mapping?
-    user.present?
-  end
+  alias_method :set_mapping?, :map_fields?
+  alias_method :process_form?, :map_fields?
+  alias_method :process_batch?, :map_fields?
+  alias_method :mark_printed?, :update?
+  alias_method :mark_mailed?, :mark_printed?
 
-  def process_form?
-    user.present?
-  end
-
-  def process_batch?
-    user.present?
-  end
-
-  def mark_printed?
-    user.present?
-  end
-
-  def mark_mailed?
-    user.present?
-  end
-
-  def update_costs?
-    user.present?
-  end
+  alias_method :update_costs?, :show?
 
   class Scope < ApplicationPolicy::Scope
     def resolve

@@ -4,17 +4,11 @@ module LSV
     self.table_name = Rails.application.credentials.dig(:lsv, :boba_table)
     self.email_column = "Email"
 
-    def title_text
-      "Boba Drops!"
-    end
+    def title_text = "Boba Drops!"
 
-    def type_text
-      "Boba Drops Shipment"
-    end
+    def type_text = "Boba Drops Shipment"
 
-    def date
-      self["[Shipment Viewer] Approved/pending at"] || "error!"
-    end
+    def date = self["[Shipment Viewer] Approved/pending at"] || "error!"
 
     def status_text
       case fields["Physical Status"]
@@ -42,24 +36,13 @@ module LSV
       end
     end
 
-    def tracking_link
-      fields["[INTL] Tracking Link"]
-    end
+    def tracking_link = fields["[INTL] Tracking Link"]
+    def tracking_number = fields["[INTL] Tracking ID"]
 
-    def tracking_number
-      fields["[INTL] Tracking ID"]
-    end
+    def icon = "🧋"
 
-    def icon
-      "🧋"
-    end
+    def shipped? = fields["Physical Status"] == "Shipped"
 
-    def shipped?
-      fields["Physical Status"] == "Shipped"
-    end
-
-    def description
-      "shipment from boba drops <3"
-    end
+    def description = "shipment from boba drops <3"
   end
 end

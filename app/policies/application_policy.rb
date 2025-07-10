@@ -16,9 +16,7 @@ class ApplicationPolicy
     user_is_admin
   end
 
-  def create?
-    false
-  end
+  def create? = false
 
   def new?
     create?

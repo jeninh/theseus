@@ -1,8 +1,6 @@
 module LSV
   class HsThirdPartyPhysicalShipment < HighSeasShipment
-    def type_text
-      "High Seas 3rd-party physical"
-    end
+    def type_text = "High Seas 3rd-party physical"
 
     def status_text
       case fields["status"]

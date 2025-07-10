@@ -10,13 +10,9 @@ module LSV
       fields["tracking_link"] || (tracking_number && "https://parcelsapp.com/en/tracking/#{tracking_number}") || nil
     end
 
-    def date
-      fields["date"] || "2027-01-31"
-    end
+    def date = fields["date"] || "2027-01-31"
 
-    def icon
-      fields["icon"] || super
-    end
+    def icon = fields["icon"] || super
 
     SUPPORTED_FIELDS.each do |field|
       define_method field do

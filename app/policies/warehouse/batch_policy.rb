@@ -1,59 +1,28 @@
 class Warehouse::BatchPolicy < ApplicationPolicy
-  def index?
-    user_can_warehouse
-  end
+  def index? = user_can_warehouse
 
-  def show?
-    user_can_warehouse
-  end
+  def show? = user_can_warehouse
 
-  def new?
-    user_can_warehouse
-  end
+  def new? = user_can_warehouse
 
-  def create?
-    user_can_warehouse
-  end
+  alias_method :create?, :new?
 
-  def edit?
-    user_can_warehouse
-  end
+  def edit? = user_can_warehouse
 
-  def update?
-    user_can_warehouse
-  end
+  alias_method :update?, :edit?
 
-  def destroy?
-    user_is_admin
-  end
+  def destroy? = user_is_admin
 
-  def map_fields?
-    user_can_warehouse
-  end
+  def map_fields? = user_can_warehouse
 
-  def set_mapping?
-    user_can_warehouse
-  end
+  alias_method :set_mapping?, :map_fields?
+  alias_method :process_form?, :map_fields?
+  alias_method :process_batch?, :map_fields?
 
-  def process_form?
-    user_can_warehouse
-  end
+  alias_method :mark_printed?, :update?
+  alias_method :mark_mailed?, :update?
 
-  def process_batch?
-    user_can_warehouse
-  end
-
-  def mark_printed?
-    user_can_warehouse
-  end
-
-  def mark_mailed?
-    user_can_warehouse
-  end
-
-  def update_costs?
-    user_can_warehouse
-  end
+  alias_method :update_costs?, :show?
 
   class Scope < ApplicationPolicy::Scope
     def resolve

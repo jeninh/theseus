@@ -8,9 +8,7 @@ module SnailMail
       FIM_HEIGHT = 45
       FIM_ELEMENT_WIDTH = 2.25
 
-      def render_fim_d(pdf, x = 245)
-        render_fim(pdf, FIM_D, x)
-      end
+      def render_fim_d(pdf, x = 245) = render_fim(pdf, FIM_D, x)
 
       def render_fim(pdf, fim, x)
         pdf.fill do

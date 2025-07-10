@@ -54,9 +54,7 @@ class Letter::InstantQueue < Letter::Queue
   default_scope { where(type: "Letter::InstantQueue") }
 
   # Methods
-  def indicia?
-    postage_type == "indicia"
-  end
+  def indicia? = postage_type == "indicia"
 
   def process_letter_instantly!(address, params = {})
     Rails.logger.info("Starting process_letter_instantly! with postage_type: #{postage_type}")
