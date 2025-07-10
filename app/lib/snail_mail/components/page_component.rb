@@ -4,7 +4,7 @@ module SnailMail
       def before_template
         start_new_page unless page_number > 0
         register_fonts
-        fallback_fonts(["arial", "noto"])
+        fallback_fonts %w[arial noto sym]
       end
 
       private
@@ -18,12 +18,12 @@ module SnailMail
           "gohu" => { normal: font_path("gohu.ttf") },
           "noto" => { normal: font_path("noto sans regular.ttf") },
           "times" => { normal: font_path("times.ttf") },
+          "sym" => { normal: font_path("apple-symbols.ttf") },
         )
       end
 
-      def font_path(font_name)
-        File.join(Rails.root, "app", "lib", "snail_mail", "assets", "fonts", font_name)
-      end
+      def font_path(font_name) = File.join(Rails.root, "app", "lib", "snail_mail", "assets", "fonts", font_name)
+
     end
   end
 end
