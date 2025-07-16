@@ -51,7 +51,7 @@
     </header>
     <%# List unmapped fields %>
     <% 
-      mapped_fields = @csv_headers.map { |header| default_mapping[header.downcase] }.compact
+      mapped_fields = @csv_headers.map { |header| default_mapping[header&.downcase] }.compact
       unmapped_fields = (@address_fields - ["batch_id"]) - mapped_fields
       
       # Find required fields that couldn't be automapped
