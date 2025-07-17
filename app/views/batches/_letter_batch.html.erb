@@ -3,7 +3,6 @@
     <div class="card-header flex items-center justify-between py-2">
       <h2 class="text-base font-medium">Letter Batch Preview</h2>
     </div>
-    
     <div class="card-body p-3">
       <div class="grid md:grid-cols-2 gap-4 mb-4">
         <div>
@@ -22,7 +21,6 @@
             <div class="text-muted text-sm">No return address</div>
           <% end %>
         </div>
-        
         <div>
           <h3 class="text-sm font-medium mb-1">Batch Information</h3>
           <div class="p-2 border rounded bg-gray-50 text-sm">
@@ -33,7 +31,6 @@
           </div>
         </div>
       </div>
-      
       <% if batch.pdf_label.attached? %>
         <div class="mb-4">
           <h3 class="text-sm font-medium mb-2">Generated Labels</h3>
@@ -50,7 +47,6 @@
                   </svg>
                   Download PDF
                 <% end %>
-                
                 <% if batch.letters.any? && batch.letters.all?(&:pending?) %>
                   <%= button_to mark_printed_batch_path(batch), method: :post, class: "btn btn-sm btn-success", data: { confirm: "Are you sure you want to mark all letters as printed?" } do %>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,8 +55,7 @@
                     Mark All Printed
                   <% end %>
                 <% end %>
-                
-                <% if batch.letters.any? && batch.letters.all?(&:printed?) %>
+                <% if batch.letters.any? && batch.letters.any?(&:printed?) %>
                   <%= button_to mark_mailed_batch_path(batch), method: :post, class: "btn btn-sm btn-info", data: { confirm: "Are you sure you want to mark all letters as mailed?" } do %>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -80,7 +75,6 @@
     </div>
   </div>
 </div>
-
 <style>
   .letter-preview-grid {
     display: grid;
@@ -88,18 +82,18 @@
     gap: 1rem;
     margin-top: 1rem;
   }
-  
+
   .letter-preview-item {
     border: 1px solid #e2e8f0;
     border-radius: 0.375rem;
     overflow: hidden;
   }
-  
+
   .letter-preview-item .document-letter {
     transform: scale(0.7);
     transform-origin: top left;
   }
-  
+
   .letter-preview-more {
     border: 1px dashed #e2e8f0;
     border-radius: 0.375rem;
