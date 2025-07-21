@@ -58,7 +58,7 @@
       required_unmapped = BaseBatchesController::REQUIRED_FIELDS.select do |field|
         # Check if any CSV header could potentially map to this field
         !@csv_headers.any? do |header|
-          default_mapping[header.downcase] == field
+          default_mapping[header&.downcase] == field
         end
       end
       
