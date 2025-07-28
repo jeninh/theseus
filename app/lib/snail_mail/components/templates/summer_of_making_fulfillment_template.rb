@@ -31,7 +31,7 @@ module SnailMail
           render_return_address(10, 278, 260, 70, size: 10)
           render_destination_address(
             126,
-            201+20,
+            180,
             266,
             67,
             size: 16,
@@ -42,16 +42,16 @@ module SnailMail
 
 
           # Render postal elements
-          render_imb(124, 120+20, 200)
+          render_imb(124, 180-67-5, 200)
           render_qr_code(5, 65, 60)
           render_letter_id(10, 19, 10)
 
-            bounding_box [150, 278],
+            bounding_box [10, 160],
                          width: 220,
                          height: 40,
                          valign: :bottom do
               font_size 8
-              font("comic") { text "it's here!" }
+              font_size(10) { font("comic") { text "it's here!" } }
               text "contents:", style: :bold
               text letter.rubber_stamps || ""
             end
