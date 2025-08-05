@@ -24,7 +24,7 @@
             <div class="label">Sent to Warehouse</div>
             <div class="date"><%= @package.dispatched_at&.strftime("%b %d") || "Pending" %></div>
           </div>
-          <% if @package.line_items.any? { |li| li.sku.in_stock.to_i < 0 } %>
+          <% if !@package.mailed? && @package.line_items.any? { |li| li.sku.in_stock.to_i < 0 } %>
             <div class="arrow">→</div>
             <div class="step backorder">
               <div class="icon">⏳</div>
