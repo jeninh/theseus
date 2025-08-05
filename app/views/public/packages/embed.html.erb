@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= vite_client_tag %>
+    <%= vite_stylesheet_tag 'tracking_embed.scss' %>
+  </head>
+  <body>
+    <% if @error %>
+      <div class="error-message">
+        <p>Order not found or not ready yet :(</p>
+      </div>
+    <% else %>
+      <div class="tracking-widget">
+        <h2><%= @package.user_facing_title || "Your Order" %> <sup><small>(ID: <%= link_to @package.hc_id, public_package_path(@package), target: "_blank" %>)</small></sup></h2>
+        <div class="timeline">
+          <div class="step <%= 'completed' if @package.created_at %>">
+            <div class="icon">📦</div>
+            <div class="label">Order Placed</div>
+            <div class="date"><%= @package.created_at.strftime("%b %d") %></div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="step <%= 'completed' if @package.dispatched_at %>">
+            <div class="icon">🏭</div>
+            <div class="label">Sent to Warehouse</div>
+            <div class="date"><%= @package.dispatched_at&.strftime("%b %d") || "Pending" %></div>
+          </div>
+          <% if @package.line_items.any? { |li| li.sku.in_stock.to_i < 0 } %>
+            <div class="arrow">→</div>
+            <div class="step backorder">
+              <div class="icon">⏳</div>
+              <div class="label">Awaiting Stock</div>
+              <div class="date">Pending</div>
+              <div class="details">
+                <% @package.line_items.select { |li| li.sku.in_stock.to_i < 0 }.each do |li| %>
+                  <p><%= li.sku.name %> is out of stock.
+                    <% if li.sku.inbound.to_i > 0 %>
+                      More on the way soon!
+                    <% end %>
+                  </p>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          <div class="arrow">→</div>
+          <div class="step <%= 'completed' if @package.mailed_at %>">
+            <div class="icon">🚚</div>
+            <div class="label">Shipped</div>
+            <div class="date"><%= @package.mailed_at&.strftime("%b %d") || "Pending" %></div>
+          </div>
+        </div>
+        <% if @package.mailed_at %>
+          <div class="tracking-info">
+            <p><strong>Carrier:</strong> <%= @package.pretty_via %></p>
+            <p><strong>Tracking Number:</strong> <%= link_to @package.tracking_number, @package.tracking_url, target: "_blank" %></p>
+          </div>
+        <% end %>
+        <% unless @package.surprise %>
+          <div class="contents">
+            <h3>Contents</h3>
+            <ul>
+              <% @package.line_items.each do |item| %>
+                <li>
+                  <%= item.sku.name %> × <%= item.quantity %>
+                  <% if !@package.mailed? && item.sku.in_stock.to_i >= 0 %>
+                    <span class="in-stock">(in stock)</span>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <% if !@package.address.us? %>
+          <div class="customs">
+            <%= link_to "customs receipt?", package_generate_customs_receipt_path(@package), method: :post, class: "btn" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </body>
+</html> 

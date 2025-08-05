@@ -608,8 +608,16 @@ Rails.application.routes.draw do
   get "/packages/:id/customs_receipt", to: "public/packages#customs_receipt", as: :package_customs_receipt
   post "/packages/:id/customs_receipt", to: "public/packages#generate_customs_receipt", as: :package_generate_customs_receipt
 
+  namespace :public do
+    resources :packages, only: [:show] do
+      member do
+        get :embed
+        post :generate_customs_receipt
+      end
+    end
+  end
+
   get "/letters/:id", to: "public/letters#show", as: :public_letter
-  get "/packages/:id", to: "public/packages#show", as: :public_package
 
   get "/impersonate", to: "public/impersonations#new", as: :public_impersonate_form
   post "/impersonate", to: "public/impersonations#create", as: :public_impersonate

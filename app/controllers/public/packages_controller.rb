@@ -27,6 +27,16 @@ module Public
       redirect_to public_package_path(@package)
     end
 
+    def embed
+      begin
+        @package = Warehouse::Order.find_by!(hc_id: params[:id])
+        @error = true if @package.draft?
+      rescue ActiveRecord::RecordNotFound
+        @error = true
+      end
+      render :embed, layout: false
+    end
+
     private
 
     def set_package
