@@ -27,6 +27,9 @@ module Public
       redirect_to public_package_path(@package)
     end
 
+    content_security_policy do |f|
+      f.frame_ancestors "*"
+    end
     def embed
       begin
         @package = Warehouse::Order.find_by!(hc_id: params[:id])
