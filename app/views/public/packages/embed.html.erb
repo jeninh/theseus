@@ -71,7 +71,7 @@
         <% end %>
         <% if !@package.address.us? %>
           <div class="customs">
-            <%= link_to "customs receipt?", package_generate_customs_receipt_path(@package), method: :post, class: "btn" %>
+            <%= link_to "customs receipt?", package_generate_customs_receipt_path(@package), method: :get, class: "btn", target: "_blank" %>
           </div>
         <% end %>
       </div>
