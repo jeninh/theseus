@@ -331,7 +331,7 @@ class Letter::Batch < Batch
     return unless letters.any?
 
     # Preload associations to avoid N+1 queries
-    preloaded_letters = letters.includes(:address, :usps_mailer_id)
+    preloaded_letters = letters.includes(:address, :usps_mailer_id, :usps_indicium, :return_address)
 
     # Build options for label generation
     label_options = {}
