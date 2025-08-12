@@ -16,7 +16,7 @@ module SnailMail
           align: :left,
           valign: :center,
           overflow: :shrink_to_fit,
-          min_font_size: 6,
+          min_font_size: 4,
           disable_wrap_by_char: true,
         }
 
