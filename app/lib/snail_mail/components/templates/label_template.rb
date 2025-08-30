@@ -12,6 +12,10 @@ module SnailMail
           "A basic label template for mail.hackclub.com"
         end
 
+        def self.show_on_single?
+          true
+        end
+
         def view_template
           # Background or main image can be added here when available
           # image(
@@ -20,28 +24,28 @@ module SnailMail
           #   width: 432,
           # )
 
-          # Render return address in upper left
-          render_return_address(10, 278, 146, 70, font: "f25")
+          # Render return address in upper left corner (smaller for labels)
+          render_return_address(8, 270, 140, 60, font: "f25", size: 8)
 
-          # Render destination address in center-right area
+          # Render destination address in center area (main focus for labels)
           render_destination_address(
-            220,
-            180,
-            200,
-            80,
-            size: 16, valign: :center, align: :left
+            150,
+            190,
+            270,
+            90,
+            size: 18, valign: :center, align: :left
           )
 
-          # Render IMb barcode
-          render_imb(216, 25, 207)
+          # Render IMb barcode at bottom (standard position)
+          render_imb(150, 25, 270)
 
-          # Render letter ID
-          render_letter_id(10, 19, 10)
+          # Render letter ID (smaller, bottom left)
+          render_letter_id(8, 15, 8)
           
-          # Render QR code for tracking
-          render_qr_code(5, 55, 50)
+          # Render QR code for tracking (smaller, left side)
+          render_qr_code(8, 90, 45)
 
-          # Render postage
+          # Render postage (top right corner)
           render_postage
         end
       end
