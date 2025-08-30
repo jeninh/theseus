@@ -17,33 +17,31 @@ module SnailMail
         end
 
         def view_template
-          # Background or main image can be added here when available
-          # image(
-          #   image_path("label_background.png"),
-          #   at: [0, 288],
-          #   width: 432,
-          # )
+          # Background image from CDN
+          image(
+            "https://hc-cdn.hel1.your-objectstorage.com/s/v3/ca3b3b1f406c0644887f743fbd5dd0fd86ebfeba_image.png",
+            at: [0, 288],
+            width: 432,
+          )
 
           # Render return address in upper left corner (smaller for labels)
           render_return_address(8, 270, 140, 60, font: "f25", size: 8)
 
           # Render destination address in center area (main focus for labels)
           render_destination_address(
-            150,
+            81,
             190,
             270,
             90,
-            size: 18, valign: :center, align: :left
+            size: 18, valign: :center, align: :center
           )
 
           # Render IMb barcode at bottom (standard position)
           render_imb(150, 25, 270)
 
-          # Render letter ID (smaller, bottom left)
-          render_letter_id(8, 15, 8)
-          
-          # Render QR code for tracking (smaller, left side)
-          render_qr_code(8, 90, 45)
+          # Render QR code and letter ID in bottom open space
+          render_qr_code(300, 50, 45)
+          render_letter_id(360, 35, 8)
 
           # Render postage (top right corner)
           render_postage
