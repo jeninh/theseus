@@ -9,6 +9,7 @@ module FrickinCountryNames
       "south korea" => "KR",
       "austria" => "AT",
       "казахстан" => "KZ",
+      "中国" => "CN",
     }
     UNSTATABLE_COUNTRIES = %w[EG SG]
 
