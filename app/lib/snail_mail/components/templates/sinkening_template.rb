@@ -49,7 +49,7 @@ module SnailMail
           )
 
           render_imb(131, 100, 266)
-          render_qr_code(7, 72 + 7, 72)
+          # render_qr_code(7, 72 + 7, 72)
           render_postage
         end
       end
