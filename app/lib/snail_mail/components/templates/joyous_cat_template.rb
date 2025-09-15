@@ -11,16 +11,9 @@ module SnailMail
       end
 
       def view_template
-        render_speech_bubble(
-          bubble_position: [111, 189],
-          bubble_width: 306,
-          bubble_height: 122,
-          bubble_radius: 10,
-          tail_x: 208,
-          tail_y: 74,
-          tail_width: 106.4,
-          line_width: 3
-        )
+        self.line_width = 3
+        stroke { rounded_rectangle([111, 189], 306, 122, 10) }
+
 
         image(
           image_path("acon-joyous-cat.png"),
