@@ -19,10 +19,22 @@ module API
         render json: { message: "Letter marked as printed" }
       end
 
+      def mark_mailed
+        authorize @letter
+        @letter.mark_mailed!
+        render json: { message: "Letter marked as mailed" }
+      end
+
       private
 
       def set_letter
-        @letter = Letter.find_by_public_id!(params[:id])
+        if params[:id]&.start_with? "hackapost!"
+          ind = USPS::Indicium.find_by_hashid!(params[:id][10...])
+          @letter = ind.letter
+          raise ActiveRecord::RecordNotFound if @letter.nil?
+        else
+          @letter = Letter.find_by_public_id!(params[:id])
+        end
       end
     end
   end

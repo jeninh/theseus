@@ -667,6 +667,7 @@ Rails.application.routes.draw do
         resources :letters do
           member do
             post :mark_printed
+            post :mark_mailed
           end
         end
         resources :letter_queues, only: [:index, :show, :create, :update, :destroy] do
