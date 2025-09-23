@@ -36,4 +36,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "QZ"
   inflect.acronym "OTP"
   inflect.acronym "ETL"
+  inflect.acronym "SoM"
 end
