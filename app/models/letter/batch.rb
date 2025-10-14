@@ -43,6 +43,8 @@
 #  fk_rails_...  (warehouse_template_id => warehouse_templates.id)
 #
 class Letter::Batch < Batch
+  def self.policy_class = Letter::BatchPolicy
+
   self.inheritance_column = "type"
   # default_scope { where(type: 'letters') }
   has_many :letters, dependent: :destroy

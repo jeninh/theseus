@@ -5,12 +5,6 @@ class BaseBatchesController < ApplicationController
   REQUIRED_FIELDS = %w[first_name line_1 city state postal_code country].freeze
   PREVIEW_ROWS = 3
 
-  # GET /batches or /batches.json
-  def index
-    authorize Batch
-    @batches = policy_scope(Batch).order(created_at: :desc)
-  end
-
   # GET /batches/1 or /batches/1.json
   def show
     authorize @batch

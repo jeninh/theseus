@@ -28,7 +28,7 @@ module SnailMail
 
           render_destination_address(
             133,
-            170,
+            176,
             256,
             107,
             size: 18, valign: :center, align: :left
