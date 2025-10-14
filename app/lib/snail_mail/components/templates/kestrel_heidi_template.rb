@@ -2,13 +2,9 @@ module SnailMail
   module Components
     module Templates
       class KestrelHeidiTemplate < TemplateBase
-      def self.template_name
-        "kestrel's heidi template!"
-      end
+      def self.template_name = "kestrel's heidi template!"
 
-      def self.show_on_single?
-        true
-      end
+      def self.show_on_single? = true
 
       def view_template
         image(
@@ -18,6 +14,20 @@ module SnailMail
         )
 
         render_return_address(10, 278, 190, 90, size: 14)
+
+        if letter.rubber_stamps.present?
+          font("arial") do
+            text_box(
+              letter.rubber_stamps,
+              at: [ 7, 80 ],
+              width: 150,
+              height: 80,
+              overflow: :shrink_to_fit,
+              disable_wrap_by_char: true,
+              min_size: 1
+            )
+          end
+        end
 
         render_destination_address(
           126,

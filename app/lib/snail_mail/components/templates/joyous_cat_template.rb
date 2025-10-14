@@ -2,13 +2,9 @@ module SnailMail
   module Components
     module Templates
       class JoyousCatTemplate < TemplateBase
-      def self.template_name
-        "Joyous Cat :3"
-      end
+      def self.template_name = "Joyous Cat :3"
 
-      def self.show_on_single?
-        true
-      end
+      def self.show_on_single? = true
 
       def view_template
         self.line_width = 3
@@ -22,6 +18,20 @@ module SnailMail
         )
 
         render_return_address(10, 270, 130, 70)
+
+        if letter.rubber_stamps.present?
+          font("arial") do
+            text_box(
+              letter.rubber_stamps,
+              at: [ 10, 50 ],
+              width: 180,
+              height: 18,
+              overflow: :shrink_to_fit,
+              disable_wrap_by_char: true,
+              min_size: 1
+            )
+          end
+        end
 
         render_destination_address(
           134,

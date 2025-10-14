@@ -2,13 +2,9 @@ module SnailMail
   module Components
     module Templates
       class MailOrpheusTemplate < TemplateBase
-        def self.template_name
-          "Mail Orpheus!"
-        end
+        def self.template_name = "Mail Orpheus!"
 
-        def self.show_on_single?
-          true
-        end
+        def self.show_on_single? = true
 
         def view_template
           image(
@@ -26,6 +22,22 @@ module SnailMail
 
           # Render return address
           render_return_address(10, 270, 130, 70)
+
+          if letter.rubber_stamps.present?
+            font("arial") do
+              text_box(
+                letter.rubber_stamps,
+                at: [ 7, 55 ],
+                width: 250,
+                height: 50,
+                overflow: :shrink_to_fit,
+                disable_wrap_by_char: true,
+                min_size: 1,
+                size: 10
+              )
+            end
+          end
+
 
           # Render destination address in speech bubble
           render_destination_address(

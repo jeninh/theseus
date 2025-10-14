@@ -4,20 +4,31 @@ module SnailMail
   module Components
     module Templates
       class HeidiReadmeTemplate < TemplateBase
-        def self.template_name
-          "Heidi Can't Readme"
-        end
+        def self.template_name = "Heidi Can't Readme"
 
-        def self.show_on_single?
-          true
-        end
+        def self.show_on_single? = true
 
         def view_template
           render_return_address(10, 278, 190, 90, size: 12, font: "f25")
 
+          if letter.rubber_stamps.present?
+            font("arial") do
+              text_box(
+                letter.rubber_stamps,
+                at: [ 10, 220 ],
+                width: 256,
+                height: 30,
+                overflow: :shrink_to_fit,
+                disable_wrap_by_char: true,
+                min_size: 1,
+                size: 10
+              )
+            end
+          end
+
           render_destination_address(
             133,
-            176,
+            170,
             256,
             107,
             size: 18, valign: :center, align: :left
