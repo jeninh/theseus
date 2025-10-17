@@ -10,6 +10,8 @@ module LettersHelper
                     ["info", "printed"]
                   when "mailed"
                     ["success", "mailed"]
+                  when "received"
+                    ["success", "received"]
                   when "canceled", "failed"
                     "bg-error-bg text-error-fg border border-error-border"
                   else
