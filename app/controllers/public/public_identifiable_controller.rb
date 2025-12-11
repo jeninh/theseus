@@ -10,6 +10,9 @@ module Public
       when "pkg"
         @record = Warehouse::Order.find_by_public_id!(params[:public_id])
         redirect_to public_package_path(@record)
+      when "bat"
+        @record = Batch.find_by_public_id!(params[:public_id])
+        redirect_to batch_path(@record)
       else
         raise ActiveRecord::RecordNotFound, "no record found with public_id: #{params[:public_id]}"
       end

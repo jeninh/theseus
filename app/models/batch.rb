@@ -45,7 +45,7 @@
 class Batch < ApplicationRecord
   include AASM
   include PublicIdentifiable
-  set_public_id_prefix "batch"
+  set_public_id_prefix "bat"
 
   include Taggable
 
