@@ -31,7 +31,7 @@ module SnailMail
           # Render destination address
           render_destination_address(
             100,
-            175,
+            155,
             230,
             55,
             size: 12, 

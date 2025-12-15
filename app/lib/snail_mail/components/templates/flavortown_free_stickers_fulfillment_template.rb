@@ -32,18 +32,18 @@ module SnailMail
 
           # Render destination address
           render_destination_address(
-            145,
-            135,
-            236,
+            160,
+            140,
+            220,
             71,
-            size: 16, 
+            size: 14, 
             valign: :bottom, 
             align: :left
           )
 
           # Render postal elements
           render_imb(240, 24, 183)
-          render_qr_code(5, 65, 60)
+          render_qr_code(5, 115, 60)
           render_letter_id(10, 65, 10, rotate: 90)
           render_postage
         end
