@@ -14,10 +14,13 @@ class HCB::PaymentAccount < ApplicationRecord
   end
 
   def create_disbursement!(amount_cents:, memo:)
-    organization.create_transfer(
+    result = client.create_disbursement(
+      event_id: organization_id,
+      to_organization_id: Rails.application.credentials.dig(:hcb, :recipient_org_id),
       amount_cents: amount_cents,
-      recipient_organization_id: Rails.application.credentials.dig(:hcb, :recipient_org_id),
-      memo: memo,
+      name: memo,
     )
+    oauth_connection.persist_refreshed_token!
+    result
   end
 end

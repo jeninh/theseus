@@ -1,0 +1,57 @@
+class HCB::OauthConnectionsController < ApplicationController
+  skip_after_action :verify_authorized, only: [:new, :callback, :destroy]
+
+  def new
+    redirect_to hcb_oauth_authorize_url, allow_other_host: true
+  end
+
+  def callback
+    code = params[:code]
+    if code.blank?
+      redirect_to root_path, alert: "HCB authorization failed"
+      return
+    end
+
+    token = hcb_oauth_client.auth_code.get_token(
+      code,
+      redirect_uri: hcb_oauth_callback_url,
+    )
+
+    connection = current_user.hcb_oauth_connection || current_user.build_hcb_oauth_connection
+    connection.update!(
+      access_token: token.token,
+      refresh_token: token.refresh_token,
+      expires_at: token.expires_at ? Time.at(token.expires_at) : nil,
+    )
+
+    redirect_to hcb_payment_accounts_path, notice: "HCB account linked! Now create a payment account."
+  end
+
+  def destroy
+    current_user.hcb_oauth_connection&.destroy
+    redirect_to root_path, notice: "HCB account unlinked"
+  end
+
+  private
+
+  def hcb_oauth_client
+    @hcb_oauth_client ||= OAuth2::Client.new(
+      Rails.application.credentials.dig(:hcb, :client_id),
+      Rails.application.credentials.dig(:hcb, :client_secret),
+      site: hcb_api_base,
+      authorize_url: "/oauth/authorize",
+      token_url: "/oauth/token",
+    )
+  end
+
+  def hcb_api_base
+    Rails.application.credentials.dig(:hcb, :api_base) || "https://hcb.hackclub.com"
+  end
+
+  def hcb_oauth_authorize_url
+    hcb_oauth_client.auth_code.authorize_url(
+      redirect_uri: hcb_oauth_callback_url,
+      scope: "read write",
+    )
+  end
+end

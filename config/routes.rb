@@ -529,6 +529,13 @@ Rails.application.routes.draw do
       resources :payment_accounts
       resources :mailer_ids
     end
+
+    namespace :hcb do
+      resource :oauth_connection, only: [:new, :destroy] do
+        get :callback, on: :collection
+      end
+      resources :payment_accounts, only: [:index, :new, :create, :show, :destroy]
+    end
     resources :source_tags
     namespace :warehouse do
       resources :templates
