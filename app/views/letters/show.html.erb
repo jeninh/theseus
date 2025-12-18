@@ -92,19 +92,7 @@
                       Indicia (Metered) - Not Purchased Yet
                     </p>
                     <% if @letter.batch_id.nil? %>
-                      <div class="flex items-center gap-4">
-                        <%= form_with(url: buy_indicia_letter_path(@letter), method: :post) do |form| %>
-                          <div class="form-group">
-                            <%= form.collection_select :usps_payment_account_id, 
-                              USPS::PaymentAccount.all, 
-                              :id, 
-                              :name, 
-                              { prompt: "Select a payment account", selected: USPS::PaymentAccount.first&.id },
-                              { required: true } %>
-                          </div>
-                          <%= form.submit "Buy Indicia", class: "primary" %>
-                        <% end %>
-                      </div>
+                      <%= render 'buy_indicia_form', letter: @letter %>
                     <% end %>
                   <% end %>
                 <% elsif @letter.postage_type == "international_origin" %>
