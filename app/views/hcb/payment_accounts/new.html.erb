@@ -1,0 +1,23 @@
+<% content_for :title do %>
+  Add HCB Payment Account
+<% end %>
+
+<h1>Add HCB Payment Account</h1>
+
+<p>Select an organization to use for paying postage:</p>
+
+<%= form_with url: hcb_payment_accounts_path, method: :post do |f| %>
+  <fieldset>
+    <%= f.label :organization_id, "Organization" %>
+    <%= f.select :organization_id, @organizations.map { |org| [org.name, org.id] }, { prompt: "Select an organization..." } %>
+  </fieldset>
+
+  <%= f.submit "Add Payment Account", class: "btn success btn-small" %>
+  <%= link_to "Cancel", hcb_payment_accounts_path, class: "btn btn-small" %>
+<% end %>
+
+<% if @organizations.empty? %>
+  <div class="notice warning">
+    <p>No organizations found. Make sure you have admin access to at least one HCB organization.</p>
+  </div>
+<% end %>

@@ -1,0 +1,18 @@
+<% content_for :title do %>
+  <%= @payment_account.organization_name %> - HCB Payment Account
+<% end %>
+
+<h1><%= @payment_account.organization_name %></h1>
+
+<dl>
+  <dt>Organization ID</dt>
+  <dd><code><%= @payment_account.organization_id %></code></dd>
+
+  <dt>Created</dt>
+  <dd><%= @payment_account.created_at.strftime("%Y-%m-%d %H:%M") %></dd>
+</dl>
+
+<div class="actions">
+  <%= link_to "Back to Payment Accounts", hcb_payment_accounts_path, class: "btn btn-small" %>
+  <%= link_to "Remove", hcb_payment_account_path(@payment_account), method: :delete, data: { confirm: "Remove this payment account?" }, class: "btn btn-small danger" %>
+</div>

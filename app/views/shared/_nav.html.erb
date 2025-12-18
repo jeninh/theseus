@@ -68,9 +68,12 @@
         </details>
       </li>
       <li>
-        <details <%= 'open' if [settings_qz_tray_path].include? request.path %>>
+        <details <%= 'open' if [settings_qz_tray_path].include?(request.path) || request.path.start_with?('/back_office/hcb') %>>
           <summary>Settings</summary>
-          <%= nav_item settings_qz_tray_path, "print settings" %>
+          <ul>
+            <%= nav_item settings_qz_tray_path, "print settings" %>
+            <%= nav_item hcb_payment_accounts_path, "HCB payment" %>
+          </ul>
         </details>
       </li>
       <% admin_tool do %>

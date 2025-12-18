@@ -1,0 +1,46 @@
+<% content_for :title do %>
+  HCB Payment Accounts
+<% end %>
+
+<h1>HCB Payment Accounts</h1>
+
+<% if current_user.hcb_connected? %>
+  <div class="notice success">
+    ✓ HCB account linked
+    <%= link_to "Unlink", hcb_oauth_connection_path, method: :delete, data: { confirm: "Are you sure? This will remove all payment accounts." }, class: "btn btn-small danger" %>
+  </div>
+
+  <div class="actions">
+    <%= link_to "Add Payment Account", new_hcb_payment_account_path, class: "btn success btn-small" %>
+  </div>
+
+  <% if @payment_accounts.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Organization</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payment_accounts.each do |account| %>
+          <tr>
+            <td><%= account.organization_name %></td>
+            <td><%= account.created_at.strftime("%Y-%m-%d") %></td>
+            <td>
+              <%= link_to "Remove", hcb_payment_account_path(account), method: :delete, data: { confirm: "Remove this payment account?" }, class: "btn btn-small danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No payment accounts yet. Add one to start paying for postage.</p>
+  <% end %>
+<% else %>
+  <div class="notice">
+    <p>Link your HCB account to pay for postage from your organization.</p>
+    <%= link_to "Link HCB Account", new_hcb_oauth_connection_path, class: "btn success" %>
+  </div>
+<% end %>
