@@ -154,18 +154,46 @@ class Letter::Batch < Batch
     generate_labels(options)
   end
 
-  # Purchase indicia for all letters in the batch using a single payment token
-  # Requires hcb_payment_account to create a disbursement for the whole batch
   def purchase_batch_indicia(usps_payment_account, hcb_payment_account:)
     raise ArgumentError, "HCB payment account is required to purchase indicia" if hcb_payment_account.nil?
+    raise ArgumentError, "USPS payment account is required to purchase indicia" if usps_payment_account.nil?
 
-    service = HCB::BatchPurchaseService.new(
-      batch: self,
-      hcb_payment_account: hcb_payment_account,
-      usps_payment_account: usps_payment_account,
-    )
-    unless service.call
-      raise StandardError, service.errors.join(", ")
+    letters_needing_indicia = letters.select do |letter|
+      letter.postage_type == "indicia" && letter.usps_indicium.nil?
+    end
+
+    return if letters_needing_indicia.empty?
+
+    total_cost_cents = letters_needing_indicia.sum do |letter|
+      (letter.postage * 100).ceil
+    end
+
+    ActiveRecord::Base.transaction do
+      transfer_service = HCB::TransferService.new(
+        hcb_payment_account: hcb_payment_account,
+        amount_cents: total_cost_cents,
+        memo: "Theseus batch postage: #{letters.count} letters",
+      )
+      transfer = transfer_service.call
+      unless transfer
+        raise StandardError, transfer_service.errors.join(", ")
+      end
+
+      update!(
+        hcb_payment_account: hcb_payment_account,
+        hcb_transfer_id: transfer.id,
+      )
+
+      payment_token = usps_payment_account.create_payment_token
+      letters_needing_indicia.each do |letter|
+        indicium = USPS::Indicium.create!(
+          letter: letter,
+          payment_account: usps_payment_account,
+          hcb_payment_account: hcb_payment_account,
+          mailing_date: letter_mailing_date,
+        )
+        indicium.buy!(payment_token)
+      end
     end
   end
 

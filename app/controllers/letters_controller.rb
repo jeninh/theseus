@@ -183,8 +183,6 @@ class LettersController < ApplicationController
       return
     end
 
-    indicium = USPS::Indicium.new(letter: @letter, payment_account: usps_payment_account)
-
     hcb_payment_account = current_user.hcb_payment_accounts.find_by(id: params[:hcb_payment_account_id])
 
     if hcb_payment_account.blank?
@@ -192,12 +190,31 @@ class LettersController < ApplicationController
       return
     end
 
-    service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
-    if service.call
-      redirect_to @letter, notice: "Indicia purchased successfully (charged to #{hcb_payment_account.organization_name})."
-    else
-      redirect_to @letter, alert: service.errors.join(", ")
+    indicium = USPS::Indicium.new(letter: @letter, payment_account: usps_payment_account)
+    cost_cents = (@letter.postage * 100).ceil
+
+    ActiveRecord::Base.transaction do
+      transfer_service = HCB::TransferService.new(
+        hcb_payment_account: hcb_payment_account,
+        amount_cents: cost_cents,
+        memo: "Theseus postage: #{@letter.public_id}",
+      )
+      transfer = transfer_service.call
+
+      unless transfer
+        redirect_to @letter, alert: transfer_service.errors.join(", ")
+        return
+      end
+
+      indicium.hcb_payment_account = hcb_payment_account
+      indicium.hcb_transfer_id = transfer.id
+      indicium.save!
+      indicium.buy!
     end
+
+    redirect_to @letter, notice: "Indicia purchased successfully (charged to #{hcb_payment_account.organization_name})."
+  rescue => e
+    redirect_to @letter, alert: "Purchase failed: #{e.message}"
   end
 
   private

@@ -90,18 +90,30 @@ class Letter::InstantQueue < Letter::Queue
           usps_payment_account = USPS::PaymentAccount.find(usps_payment_account_id)
           Rails.logger.info("Found USPS payment account #{usps_payment_account.id}")
 
-          indicium = USPS::Indicium.create!(
+          indicium = USPS::Indicium.new(
             letter: letter,
             payment_account: usps_payment_account,
             mailing_date: letter.mailing_date,
           )
-          Rails.logger.info("Created indicium #{indicium.id} for letter #{letter.id}")
+          Rails.logger.info("Created indicium for letter #{letter.id}")
+
+          cost_cents = (letter.postage * 100).ceil
 
           Rails.logger.info("Using HCB payment account #{hcb_payment_account.id} for letter #{letter.id}")
-          service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
-          unless service.call
-            raise "HCB payment failed: #{service.errors.join(', ')}"
+          transfer_service = HCB::TransferService.new(
+            hcb_payment_account: hcb_payment_account,
+            amount_cents: cost_cents,
+            memo: "Theseus postage: #{letter.public_id}",
+          )
+          transfer = transfer_service.call
+          unless transfer
+            raise "HCB payment failed: #{transfer_service.errors.join(', ')}"
           end
+
+          indicium.hcb_payment_account = hcb_payment_account
+          indicium.hcb_transfer_id = transfer.id
+          indicium.save!
+          indicium.buy!
           Rails.logger.info("Successfully bought indicium for letter #{letter.id}")
 
           letter.reload
