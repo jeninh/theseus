@@ -2,7 +2,7 @@ class HCB::PaymentAccountsController < ApplicationController
   skip_after_action :verify_authorized
 
   before_action :require_hcb_connection, except: [:index]
-  before_action :set_payment_account, only: [:show, :destroy]
+  before_action :set_payment_account, only: [:show]
 
   def index
     @payment_accounts = current_user.hcb_payment_accounts
@@ -36,11 +36,6 @@ class HCB::PaymentAccountsController < ApplicationController
   end
 
   def show
-  end
-
-  def destroy
-    @payment_account.destroy
-    redirect_to hcb_payment_accounts_path, notice: "Payment account removed"
   end
 
   private

@@ -7,7 +7,6 @@
 <% if current_user.hcb_connected? %>
   <div class="notice success">
     ✓ HCB account linked
-    <%= link_to "Unlink", hcb_oauth_connection_path, method: :delete, data: { confirm: "Are you sure? This will remove all payment accounts." }, class: "btn btn-small danger" %>
   </div>
 
   <div class="actions">
@@ -20,7 +19,6 @@
         <tr>
           <th>Organization</th>
           <th>Created</th>
-          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -28,9 +26,6 @@
           <tr>
             <td><%= account.organization_name %></td>
             <td><%= account.created_at.strftime("%Y-%m-%d") %></td>
-            <td>
-              <%= link_to "Remove", hcb_payment_account_path(account), method: :delete, data: { confirm: "Remove this payment account?" }, class: "btn btn-small danger" %>
-            </td>
           </tr>
         <% end %>
       </tbody>

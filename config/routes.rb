@@ -531,10 +531,10 @@ Rails.application.routes.draw do
     end
 
     namespace :hcb do
-      resource :oauth_connection, only: [:new, :destroy] do
+      resource :oauth_connection, only: [:new] do
         get :callback, on: :collection
       end
-      resources :payment_accounts, only: [:index, :new, :create, :show, :destroy]
+      resources :payment_accounts, only: [:index, :new, :create, :show]
     end
     resources :source_tags
     namespace :warehouse do

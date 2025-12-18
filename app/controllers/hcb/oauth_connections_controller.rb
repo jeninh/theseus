@@ -1,5 +1,5 @@
 class HCB::OauthConnectionsController < ApplicationController
-  skip_after_action :verify_authorized, only: [:new, :callback, :destroy]
+  skip_after_action :verify_authorized, only: [:new, :callback]
 
   def new
     redirect_to hcb_oauth_authorize_url, allow_other_host: true
@@ -25,11 +25,6 @@ class HCB::OauthConnectionsController < ApplicationController
     )
 
     redirect_to hcb_payment_accounts_path, notice: "HCB account linked! Now create a payment account."
-  end
-
-  def destroy
-    current_user.hcb_oauth_connection&.destroy
-    redirect_to root_path, notice: "HCB account unlinked"
   end
 
   private
