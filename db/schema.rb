@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_18_193953) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_18_194459) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -310,6 +310,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_193953) do
     t.bigint "usps_payment_account_id"
     t.boolean "include_qr_code", default: true
     t.date "letter_mailing_date"
+    t.bigint "hcb_payment_account_id"
+    t.index ["hcb_payment_account_id"], name: "index_letter_queues_on_hcb_payment_account_id"
     t.index ["letter_mailer_id_id"], name: "index_letter_queues_on_letter_mailer_id_id"
     t.index ["letter_return_address_id"], name: "index_letter_queues_on_letter_return_address_id"
     t.index ["type"], name: "index_letter_queues_on_type"
@@ -455,6 +457,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_193953) do
     t.jsonb "raw_json_response"
     t.boolean "flirted"
     t.decimal "fees"
+    t.bigint "hcb_payment_account_id"
+    t.string "hcb_transfer_id"
+    t.index ["hcb_payment_account_id"], name: "index_usps_indicia_on_hcb_payment_account_id"
     t.index ["letter_id"], name: "index_usps_indicia_on_letter_id"
     t.index ["usps_payment_account_id"], name: "index_usps_indicia_on_usps_payment_account_id"
   end
@@ -602,6 +607,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_193953) do
   add_foreign_key "hcb_oauth_connections", "users"
   add_foreign_key "hcb_payment_accounts", "hcb_oauth_connections"
   add_foreign_key "hcb_payment_accounts", "users"
+  add_foreign_key "letter_queues", "hcb_payment_accounts"
   add_foreign_key "letter_queues", "return_addresses", column: "letter_return_address_id"
   add_foreign_key "letter_queues", "users"
   add_foreign_key "letter_queues", "usps_mailer_ids", column: "letter_mailer_id_id"
@@ -618,6 +624,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_193953) do
   add_foreign_key "return_addresses", "users"
   add_foreign_key "users", "return_addresses", column: "home_return_address_id"
   add_foreign_key "users", "usps_mailer_ids", column: "home_mid_id"
+  add_foreign_key "usps_indicia", "hcb_payment_accounts"
   add_foreign_key "usps_indicia", "letters"
   add_foreign_key "usps_indicia", "usps_payment_accounts"
   add_foreign_key "usps_iv_mtr_events", "letters", on_delete: :nullify

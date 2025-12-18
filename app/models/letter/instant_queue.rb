@@ -19,6 +19,7 @@
 #  user_facing_title          :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
+#  hcb_payment_account_id     :bigint
 #  letter_mailer_id_id        :bigint
 #  letter_return_address_id   :bigint
 #  user_id                    :bigint           not null
@@ -26,6 +27,7 @@
 #
 # Indexes
 #
+#  index_letter_queues_on_hcb_payment_account_id    (hcb_payment_account_id)
 #  index_letter_queues_on_letter_mailer_id_id       (letter_mailer_id_id)
 #  index_letter_queues_on_letter_return_address_id  (letter_return_address_id)
 #  index_letter_queues_on_type                      (type)
@@ -33,6 +35,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (hcb_payment_account_id => hcb_payment_accounts.id)
 #  fk_rails_...  (letter_mailer_id_id => usps_mailer_ids.id)
 #  fk_rails_...  (letter_return_address_id => return_addresses.id)
 #  fk_rails_...  (user_id => users.id)
@@ -83,22 +86,27 @@ class Letter::InstantQueue < Letter::Queue
       if indicia?
         Rails.logger.info("Creating indicia for letter #{letter.id}")
         begin
-          payment_account = USPS::PaymentAccount.find(usps_payment_account_id)
-          Rails.logger.info("Found payment account #{payment_account.id}")
+          usps_payment_account = USPS::PaymentAccount.find(usps_payment_account_id)
+          Rails.logger.info("Found USPS payment account #{usps_payment_account.id}")
 
-          # Create and save the indicium first
           indicium = USPS::Indicium.create!(
             letter: letter,
-            payment_account: payment_account,
+            payment_account: usps_payment_account,
             mailing_date: letter.mailing_date,
           )
           Rails.logger.info("Created indicium #{indicium.id} for letter #{letter.id}")
 
-          # Then buy the indicium
-          indicium.buy!
+          if hcb_payment_account.present?
+            Rails.logger.info("Using HCB payment account #{hcb_payment_account.id} for letter #{letter.id}")
+            service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
+            unless service.call
+              raise "HCB payment failed: #{service.errors.join(', ')}"
+            end
+          else
+            indicium.buy!
+          end
           Rails.logger.info("Successfully bought indicium for letter #{letter.id}")
 
-          # Reload the letter to ensure we have the latest indicium association
           letter.reload
           if letter.usps_indicium.present?
             Rails.logger.info("Verified indicium #{letter.usps_indicium.id} is associated with letter #{letter.id}")

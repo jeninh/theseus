@@ -14,16 +14,20 @@
 #  usps_sku                :string
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
+#  hcb_payment_account_id  :bigint
+#  hcb_transfer_id         :string
 #  letter_id               :bigint
 #  usps_payment_account_id :bigint           not null
 #
 # Indexes
 #
+#  index_usps_indicia_on_hcb_payment_account_id   (hcb_payment_account_id)
 #  index_usps_indicia_on_letter_id                (letter_id)
 #  index_usps_indicia_on_usps_payment_account_id  (usps_payment_account_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (hcb_payment_account_id => hcb_payment_accounts.id)
 #  fk_rails_...  (letter_id => letters.id)
 #  fk_rails_...  (usps_payment_account_id => usps_payment_accounts.id)
 #

@@ -19,6 +19,7 @@
 #  user_facing_title          :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
+#  hcb_payment_account_id     :bigint
 #  letter_mailer_id_id        :bigint
 #  letter_return_address_id   :bigint
 #  user_id                    :bigint           not null
@@ -26,6 +27,7 @@
 #
 # Indexes
 #
+#  index_letter_queues_on_hcb_payment_account_id    (hcb_payment_account_id)
 #  index_letter_queues_on_letter_mailer_id_id       (letter_mailer_id_id)
 #  index_letter_queues_on_letter_return_address_id  (letter_return_address_id)
 #  index_letter_queues_on_type                      (type)
@@ -33,6 +35,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (hcb_payment_account_id => hcb_payment_accounts.id)
 #  fk_rails_...  (letter_mailer_id_id => usps_mailer_ids.id)
 #  fk_rails_...  (letter_return_address_id => return_addresses.id)
 #  fk_rails_...  (user_id => users.id)

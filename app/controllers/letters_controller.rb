@@ -177,18 +177,32 @@ class LettersController < ApplicationController
       return
     end
 
-    payment_account = USPS::PaymentAccount.find_by(id: params[:usps_payment_account_id])
-    if payment_account.nil?
-      redirect_to @letter, alert: "Please select a valid payment account."
+    usps_payment_account = USPS::PaymentAccount.find_by(id: params[:usps_payment_account_id])
+    if usps_payment_account.nil?
+      redirect_to @letter, alert: "Please select a valid USPS payment account."
       return
     end
 
-    indicium = USPS::Indicium.new(letter: @letter, payment_account: payment_account)
-    begin
-      indicium.buy!
-      redirect_to @letter, notice: "Indicia purchased successfully."
-    rescue => e
-      redirect_to @letter, alert: "Failed to purchase indicia: #{e.message}"
+    indicium = USPS::Indicium.new(letter: @letter, payment_account: usps_payment_account)
+
+    hcb_payment_account = current_user.hcb_payment_accounts.find_by(id: params[:hcb_payment_account_id])
+
+    if hcb_payment_account.present?
+      service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
+      if service.call
+        redirect_to @letter, notice: "Indicia purchased successfully (charged to #{hcb_payment_account.organization_name})."
+      else
+        redirect_to @letter, alert: service.errors.join(", ")
+      end
+    elsif current_user.can_use_indicia?
+      begin
+        indicium.buy!
+        redirect_to @letter, notice: "Indicia purchased successfully."
+      rescue => e
+        redirect_to @letter, alert: "Failed to purchase indicia: #{e.message}"
+      end
+    else
+      redirect_to @letter, alert: "You must select an HCB payment account to purchase indicia."
     end
   end
 
