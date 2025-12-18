@@ -14,7 +14,7 @@ class HCB::OauthConnectionsController < ApplicationController
 
     token = hcb_oauth_client.auth_code.get_token(
       code,
-      redirect_uri: hcb_oauth_callback_url,
+      redirect_uri: callback_hcb_oauth_connection_url,
     )
 
     connection = current_user.hcb_oauth_connection || current_user.build_hcb_oauth_connection
@@ -50,7 +50,7 @@ class HCB::OauthConnectionsController < ApplicationController
 
   def hcb_oauth_authorize_url
     hcb_oauth_client.auth_code.authorize_url(
-      redirect_uri: hcb_oauth_callback_url,
+      redirect_uri: callback_hcb_oauth_connection_url,
       scope: "read write",
     )
   end

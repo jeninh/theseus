@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d1cc2402-3c65-4046-bb1c-ec3e5b4aef52" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/controllers/letters_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/letters_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/hcb/oauth_connections_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/hcb/oauth_connections_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/hcb/oauth_connection.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/hcb/oauth_connection.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/hcb/payment_account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/hcb/payment_account.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/letter/instant_queue.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/letter/instant_queue.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/letter/queue.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/letter/queue.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/usps/indicium.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/usps/indicium.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +158,7 @@
       <workItem from="1765302419304" duration="4201000" />
       <workItem from="1765488873945" duration="19000" />
       <workItem from="1765488900213" duration="5988000" />
-      <workItem from="1766085135057" duration="1617000" />
+      <workItem from="1766085135057" duration="1928000" />
     </task>
     <servers />
   </component>
