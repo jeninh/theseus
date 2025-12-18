@@ -36,8 +36,8 @@ class HCB::OauthConnectionsController < ApplicationController
 
   def hcb_oauth_client
     @hcb_oauth_client ||= OAuth2::Client.new(
-      Rails.application.credentials.dig(:hcb, :client_id),
-      Rails.application.credentials.dig(:hcb, :client_secret),
+      ENV.fetch("HCB_CLIENT_ID"),
+      ENV.fetch("HCB_CLIENT_SECRET"),
       site: "#{hcb_api_base}/api/v4/",
       authorize_url: "oauth/authorize",
       token_url: "oauth/token",

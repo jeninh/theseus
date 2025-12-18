@@ -38,7 +38,7 @@ class HCB::PaymentAccount < ApplicationRecord
   def create_disbursement!(amount_cents:, memo:)
     result = client.create_disbursement(
       event_id: organization_id,
-      to_organization_id: Rails.application.credentials.dig(:hcb, :recipient_org_id),
+      to_organization_id: ENV.fetch("HCB_RECIPIENT_ORG_ID"),
       amount_cents: amount_cents,
       name: memo,
     )

@@ -28,8 +28,8 @@ class HCB::OauthConnection < ApplicationRecord
 
   def client
     @client ||= HCBV4::Client.from_credentials(
-      client_id: Rails.application.credentials.dig(:hcb, :client_id),
-      client_secret: Rails.application.credentials.dig(:hcb, :client_secret),
+      client_id: ENV.fetch("HCB_CLIENT_ID"),
+      client_secret: ENV.fetch("HCB_CLIENT_SECRET"),
       access_token: access_token,
       refresh_token: refresh_token,
       expires_at: expires_at&.to_i,
