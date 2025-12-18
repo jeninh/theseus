@@ -35,6 +35,8 @@ class User < ApplicationRecord
   has_many :letters
   has_many :batches
   has_many :letter_queues, dependent: :destroy, class_name: "Letter::Queue"
+  has_one :hcb_oauth_connection, class_name: "HCB::OauthConnection", dependent: :destroy
+  has_many :hcb_payment_accounts, class_name: "HCB::PaymentAccount", dependent: :destroy
   belongs_to :home_mid, class_name: "USPS::MailerId", optional: true
   belongs_to :home_return_address, class_name: "ReturnAddress", optional: true
 
@@ -43,6 +45,10 @@ class User < ApplicationRecord
   set_public_id_prefix "usr"
 
   def admin? = is_admin
+
+  def can_use_indicia? = can_use_indicia
+
+  def hcb_connected? = hcb_oauth_connection.present?
 
   def make_admin! = update!(is_admin: true)
 
