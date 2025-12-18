@@ -1,9 +1,10 @@
 class HCB::TransferService
-  attr_reader :hcb_payment_account, :amount_cents, :memo, :errors
+  attr_reader :hcb_payment_account, :amount_cents, :name, :memo, :errors
 
-  def initialize(hcb_payment_account:, amount_cents:, memo:)
+  def initialize(hcb_payment_account:, amount_cents:, name:, memo: nil)
     @hcb_payment_account = hcb_payment_account
     @amount_cents = amount_cents
+    @name = name
     @memo = memo
     @errors = []
   end
@@ -14,6 +15,7 @@ class HCB::TransferService
 
     transfer = hcb_payment_account.create_disbursement!(
       amount_cents: amount_cents,
+      name: name,
       memo: memo,
     )
 

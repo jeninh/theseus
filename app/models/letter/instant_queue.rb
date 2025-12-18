@@ -90,12 +90,13 @@ class Letter::InstantQueue < Letter::Queue
           usps_payment_account = USPS::PaymentAccount.find(usps_payment_account_id)
           Rails.logger.info("Found USPS payment account #{usps_payment_account.id}")
 
-          indicium = USPS::Indicium.new(
+          indicium = USPS::Indicium.create!(
             letter: letter,
             payment_account: usps_payment_account,
+            hcb_payment_account: hcb_payment_account,
             mailing_date: letter.mailing_date,
           )
-          Rails.logger.info("Created indicium for letter #{letter.id}")
+          Rails.logger.info("Created indicium #{indicium.public_id} for letter #{letter.id}")
 
           cost_cents = (letter.postage * 100).ceil
 
@@ -103,17 +104,28 @@ class Letter::InstantQueue < Letter::Queue
           transfer_service = HCB::TransferService.new(
             hcb_payment_account: hcb_payment_account,
             amount_cents: cost_cents,
-            memo: "Theseus postage: #{letter.public_id}",
+            name: "Postage for #{letter.public_id} #{indicium.public_id} #{Rails.application.routes.url_helpers.letter_path(letter)}",
+            memo: "[theseus] postage for a #{letter.processing_category}",
           )
           transfer = transfer_service.call
           unless transfer
+            indicium.destroy!
             raise "HCB payment failed: #{transfer_service.errors.join(', ')}"
           end
 
-          indicium.hcb_payment_account = hcb_payment_account
-          indicium.hcb_transfer_id = transfer.id
-          indicium.save!
-          indicium.buy!
+          indicium.update!(hcb_transfer_id: transfer.id)
+
+          begin
+            indicium.buy!
+          rescue => e
+            HCB::PaymentAccount.refund_to_organization!(
+              organization_id: hcb_payment_account.organization_id,
+              amount_cents: cost_cents,
+              name: "Refund for #{letter.public_id} #{indicium.public_id} #{Rails.application.routes.url_helpers.letter_path(letter)}",
+              memo: "[theseus] postage refund for a #{letter.processing_category}",
+            )
+            raise e
+          end
           Rails.logger.info("Successfully bought indicium for letter #{letter.id}")
 
           letter.reload

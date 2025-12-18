@@ -190,31 +190,43 @@ class LettersController < ApplicationController
       return
     end
 
-    indicium = USPS::Indicium.new(letter: @letter, payment_account: usps_payment_account)
+    indicium = USPS::Indicium.create!(
+      letter: @letter,
+      payment_account: usps_payment_account,
+      hcb_payment_account: hcb_payment_account,
+    )
     cost_cents = (@letter.postage * 100).ceil
 
-    ActiveRecord::Base.transaction do
-      transfer_service = HCB::TransferService.new(
-        hcb_payment_account: hcb_payment_account,
-        amount_cents: cost_cents,
-        memo: "Theseus postage: #{@letter.public_id}",
-      )
-      transfer = transfer_service.call
+    transfer_service = HCB::TransferService.new(
+      hcb_payment_account: hcb_payment_account,
+      amount_cents: cost_cents,
+      name: "Postage for #{@letter.public_id} #{indicium.public_id} #{letter_path(@letter)}",
+      memo: "[theseus] postage for a #{@letter.processing_category}",
+    )
+    transfer = transfer_service.call
 
-      unless transfer
-        redirect_to @letter, alert: transfer_service.errors.join(", ")
-        return
-      end
+    unless transfer
+      indicium.destroy!
+      redirect_to @letter, alert: transfer_service.errors.join(", ")
+      return
+    end
 
-      indicium.hcb_payment_account = hcb_payment_account
-      indicium.hcb_transfer_id = transfer.id
-      indicium.save!
+    indicium.update!(hcb_transfer_id: transfer.id)
+
+    begin
       indicium.buy!
+    rescue => e
+      HCB::PaymentAccount.refund_to_organization!(
+        organization_id: hcb_payment_account.organization_id,
+        amount_cents: cost_cents,
+        name: "Refund for #{@letter.public_id} #{indicium.public_id} #{letter_path(@letter)}",
+        memo: "[theseus] postage refund for a #{@letter.processing_category}",
+      )
+      redirect_to @letter, alert: "Purchase failed: #{e.message}"
+      return
     end
 
     redirect_to @letter, notice: "Indicia purchased successfully (charged to #{hcb_payment_account.organization_name})."
-  rescue => e
-    redirect_to @letter, alert: "Purchase failed: #{e.message}"
   end
 
   private

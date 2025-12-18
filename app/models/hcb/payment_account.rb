@@ -27,6 +27,32 @@ class HCB::PaymentAccount < ApplicationRecord
   validates :organization_id, presence: true, uniqueness: { scope: :user_id }
   validates :organization_name, presence: true
 
+  def self.theseus_client
+    HCBV4::Client.from_credentials(
+      client_id: ENV.fetch("HCB_CLIENT_ID"),
+      client_secret: ENV.fetch("HCB_CLIENT_SECRET"),
+      access_token: ENV.fetch("HCB_SERVICE_ACCESS_TOKEN"),
+      refresh_token: ENV.fetch("HCB_SERVICE_REFRESH_TOKEN"),
+    )
+  end
+
+  def self.refund_to_organization!(organization_id:, amount_cents:, name:, memo: nil)
+    result = theseus_client.create_disbursement(
+      event_id: ENV.fetch("HCB_RECIPIENT_ORG_ID"),
+      to_organization_id: organization_id,
+      amount_cents: amount_cents,
+      name: name,
+    )
+    if memo && result.transaction_id
+      theseus_client.update_transaction(
+        result.transaction_id,
+        event_id: ENV.fetch("HCB_RECIPIENT_ORG_ID"),
+        memo: memo
+      )
+    end
+    result
+  end
+
   def client
     oauth_connection.client
   end
@@ -35,13 +61,16 @@ class HCB::PaymentAccount < ApplicationRecord
     client.organization!(organization_id)
   end
 
-  def create_disbursement!(amount_cents:, memo:)
+  def create_disbursement!(amount_cents:, name:, memo: nil)
     result = client.create_disbursement(
       event_id: organization_id,
       to_organization_id: ENV.fetch("HCB_RECIPIENT_ORG_ID"),
       amount_cents: amount_cents,
-      name: memo,
+      name: name,
     )
+    if memo && result.transaction_id
+      client.update_transaction(result.transaction_id, event_id: organization_id, memo: memo)
+    end
     oauth_connection.persist_refreshed_token!
     result
   end

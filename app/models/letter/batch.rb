@@ -168,23 +168,42 @@ class Letter::Batch < Batch
       (letter.postage * 100).ceil
     end
 
-    ActiveRecord::Base.transaction do
-      transfer_service = HCB::TransferService.new(
-        hcb_payment_account: hcb_payment_account,
-        amount_cents: total_cost_cents,
-        memo: "Theseus batch postage: #{letters.count} letters",
-      )
-      transfer = transfer_service.call
-      unless transfer
-        raise StandardError, transfer_service.errors.join(", ")
-      end
+    letter_count = letters_needing_indicia.count { |l| l.processing_category == "letter" }
+    flat_count = letters_needing_indicia.count { |l| l.processing_category == "flat" }
+    batch_description = [
+      ("#{letter_count} #{"letter".pluralize(letter_count)}" if letter_count > 0),
+      ("#{flat_count} #{"flat".pluralize(flat_count)}" if flat_count > 0),
+    ].compact.join(" and ")
 
+    transfer_service = HCB::TransferService.new(
+      hcb_payment_account: hcb_payment_account,
+      amount_cents: total_cost_cents,
+      name: "Batch postage for #{public_id} (#{letters_needing_indicia.count} letters) #{Rails.application.routes.url_helpers.letter_batch_path(self)}",
+      memo: "[theseus] postage for a batch of #{batch_description}",
+    )
+    transfer = transfer_service.call
+    unless transfer
+      raise StandardError, transfer_service.errors.join(", ")
+    end
+
+    begin
+      payment_token = usps_payment_account.create_payment_token
+    rescue => e
+      HCB::PaymentAccount.refund_to_organization!(
+        organization_id: hcb_payment_account.organization_id,
+        amount_cents: total_cost_cents,
+        name: "Refund for batch #{public_id} #{Rails.application.routes.url_helpers.letter_batch_path(self)}",
+        memo: "[theseus] postage refund for a batch of #{batch_description}",
+      )
+      raise e
+    end
+
+    ActiveRecord::Base.transaction do
       update!(
         hcb_payment_account: hcb_payment_account,
         hcb_transfer_id: transfer.id,
       )
 
-      payment_token = usps_payment_account.create_payment_token
       letters_needing_indicia.each do |letter|
         indicium = USPS::Indicium.create!(
           letter: letter,
