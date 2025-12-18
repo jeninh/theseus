@@ -103,9 +103,12 @@ class Letter::BatchesController < BaseBatchesController
         end
       end
 
+      hcb_payment_account = current_user.hcb_payment_accounts.find_by(id: letter_batch_params[:hcb_payment_account_id])
+
       begin
         @batch.process!(
           payment_account: payment_account,
+          hcb_payment_account: hcb_payment_account,
           us_postage_type: letter_batch_params[:us_postage_type],
           intl_postage_type: letter_batch_params[:intl_postage_type],
           template_cycle: letter_batch_params[:template_cycle].to_s.split(",").compact_blank,
@@ -219,6 +222,7 @@ class Letter::BatchesController < BaseBatchesController
       :us_postage_type,
       :intl_postage_type,
       :usps_payment_account_id,
+      :hcb_payment_account_id,
       :include_qr_code,
       :print_immediately,
       :template_cycle,

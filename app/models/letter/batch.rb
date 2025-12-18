@@ -18,6 +18,8 @@
 #  warehouse_user_facing_title :string
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
+#  hcb_payment_account_id      :bigint
+#  hcb_transfer_id             :string
 #  letter_mailer_id_id         :bigint
 #  letter_queue_id             :bigint
 #  letter_return_address_id    :bigint
@@ -26,6 +28,7 @@
 #
 # Indexes
 #
+#  index_batches_on_hcb_payment_account_id    (hcb_payment_account_id)
 #  index_batches_on_letter_mailer_id_id       (letter_mailer_id_id)
 #  index_batches_on_letter_queue_id           (letter_queue_id)
 #  index_batches_on_letter_return_address_id  (letter_return_address_id)
@@ -36,6 +39,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (hcb_payment_account_id => hcb_payment_accounts.id)
 #  fk_rails_...  (letter_mailer_id_id => usps_mailer_ids.id)
 #  fk_rails_...  (letter_queue_id => letter_queues.id)
 #  fk_rails_...  (letter_return_address_id => return_addresses.id)
@@ -136,7 +140,7 @@ class Letter::Batch < Batch
         raise "...we're out of money (ask Nora to put at least #{ActiveSupport::NumberHelper.number_to_currency(indicia_cost)} in the #{options[:payment_account].display_name} account!)"
       end
 
-      purchase_batch_indicia(options[:payment_account])
+      purchase_batch_indicia(options[:payment_account], hcb_payment_account: options[:hcb_payment_account])
     end
 
     # Generate PDF labels with the provided options
@@ -151,21 +155,30 @@ class Letter::Batch < Batch
   end
 
   # Purchase indicia for all letters in the batch using a single payment token
-  def purchase_batch_indicia(payment_account)
-    # Create a single payment token for the entire batch
-    payment_token = payment_account.create_payment_token
-
-    # Preload associations to avoid N+1 queries
-    letters.includes(:address).each do |letter|
-      next unless letter.postage_type == "indicia" && letter.usps_indicium.nil?
-
-      # Create and purchase indicia for each letter using the same payment token
-      indicium = USPS::Indicium.new(
-        letter: letter,
-        payment_account: payment_account,
-        mailing_date: letter_mailing_date,
+  # If hcb_payment_account is provided, creates a single disbursement for the whole batch
+  def purchase_batch_indicia(usps_payment_account, hcb_payment_account: nil)
+    if hcb_payment_account.present?
+      service = HCB::BatchPurchaseService.new(
+        batch: self,
+        hcb_payment_account: hcb_payment_account,
+        usps_payment_account: usps_payment_account,
       )
-      indicium.buy!(payment_token)
+      unless service.call
+        raise StandardError, service.errors.join(", ")
+      end
+    else
+      payment_token = usps_payment_account.create_payment_token
+
+      letters.includes(:address).each do |letter|
+        next unless letter.postage_type == "indicia" && letter.usps_indicium.nil?
+
+        indicium = USPS::Indicium.new(
+          letter: letter,
+          payment_account: usps_payment_account,
+          mailing_date: letter_mailing_date,
+        )
+        indicium.buy!(payment_token)
+      end
     end
   end
 

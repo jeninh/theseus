@@ -18,6 +18,8 @@
 #  warehouse_user_facing_title :string
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
+#  hcb_payment_account_id      :bigint
+#  hcb_transfer_id             :string
 #  letter_mailer_id_id         :bigint
 #  letter_queue_id             :bigint
 #  letter_return_address_id    :bigint
@@ -26,6 +28,7 @@
 #
 # Indexes
 #
+#  index_batches_on_hcb_payment_account_id    (hcb_payment_account_id)
 #  index_batches_on_letter_mailer_id_id       (letter_mailer_id_id)
 #  index_batches_on_letter_queue_id           (letter_queue_id)
 #  index_batches_on_letter_return_address_id  (letter_return_address_id)
@@ -36,6 +39,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (hcb_payment_account_id => hcb_payment_accounts.id)
 #  fk_rails_...  (letter_mailer_id_id => usps_mailer_ids.id)
 #  fk_rails_...  (letter_queue_id => letter_queues.id)
 #  fk_rails_...  (letter_return_address_id => return_addresses.id)

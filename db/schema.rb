@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_18_194459) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_18_194622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -106,6 +106,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_194459) do
     t.string "template_cycle", default: [], array: true
     t.string "letter_return_address_name"
     t.bigint "letter_queue_id"
+    t.bigint "hcb_payment_account_id"
+    t.string "hcb_transfer_id"
+    t.index ["hcb_payment_account_id"], name: "index_batches_on_hcb_payment_account_id"
     t.index ["letter_mailer_id_id"], name: "index_batches_on_letter_mailer_id_id"
     t.index ["letter_queue_id"], name: "index_batches_on_letter_queue_id"
     t.index ["letter_return_address_id"], name: "index_batches_on_letter_return_address_id"
@@ -599,6 +602,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_194459) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "batches"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "batches", "hcb_payment_accounts"
   add_foreign_key "batches", "letter_queues"
   add_foreign_key "batches", "return_addresses", column: "letter_return_address_id"
   add_foreign_key "batches", "users"
