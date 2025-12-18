@@ -51,7 +51,9 @@ class HCB::PaymentAccountsController < ApplicationController
   end
 
   def available_organizations
-    current_user.hcb_oauth_connection.organizations
+    current_user.hcb_oauth_connection.organizations.reject do |org|
+      HCB::PaymentAccount::BLOCKED_ORGANIZATION_IDS.include?(org.id)
+    end
   rescue => e
     Rails.logger.error "Failed to fetch HCB organizations: #{e.message}"
     []

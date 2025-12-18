@@ -24,8 +24,21 @@ class HCB::PaymentAccount < ApplicationRecord
   belongs_to :user
   belongs_to :oauth_connection, class_name: "HCB::OauthConnection", foreign_key: :hcb_oauth_connection_id
 
+  BLOCKED_ORGANIZATION_IDS = %w[hq-usps-ops].freeze
+
   validates :organization_id, presence: true, uniqueness: { scope: :user_id }
   validates :organization_name, presence: true
+  validate :organization_not_blocked
+
+  private
+
+  def organization_not_blocked
+    if BLOCKED_ORGANIZATION_IDS.include?(organization_id)
+      errors.add(:organization_id, "is not allowed for payment accounts")
+    end
+  end
+
+  public
 
   def self.theseus_client
     HCBV4::Client.from_credentials(
