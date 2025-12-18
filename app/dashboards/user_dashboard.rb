@@ -9,6 +9,7 @@ class UserDashboard < Administrate::BaseDashboard
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
     id: Field::Number,
+    can_use_indicia: Field::Boolean,
     can_warehouse: Field::Boolean,
     email: Field::String,
     icon_url: Field::String,
@@ -31,6 +32,7 @@ class UserDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     username
     is_admin
+    can_use_indicia
     can_warehouse
     email
     hca_id
@@ -40,6 +42,7 @@ class UserDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
     id
+    can_use_indicia
     can_warehouse
     email
     icon_url
@@ -58,6 +61,7 @@ class UserDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
+    can_use_indicia
     can_warehouse
     email
     icon_url
