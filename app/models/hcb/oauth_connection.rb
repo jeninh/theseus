@@ -59,6 +59,6 @@ class HCB::OauthConnection < ApplicationRecord
   private
 
   def hcb_api_base
-    Rails.application.credentials.dig(:hcb, :api_base) || "https://hcb.hackclub.com"
+    ENV.fetch("HCB_API_BASE", "https://hcb.hackclub.com")
   end
 end
