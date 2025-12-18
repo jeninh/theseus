@@ -1,5 +1,7 @@
 class HCB::PaymentAccountsController < ApplicationController
-  before_action :require_hcb_connection
+  skip_after_action :verify_authorized
+
+  before_action :require_hcb_connection, except: [:index]
   before_action :set_payment_account, only: [:show, :destroy]
 
   def index
