@@ -239,6 +239,44 @@ class USPS::APIService
       conn.get("/payments/v3/payment-account/#{account_number}", { accountType: account_type, permitZip: permit_zip, amount: }.compact_blank).body
     end
 
+    # Fetches domestic First-Class Mail letter/flat price
+    # @param [String] processing_category "LETTERS" or "FLATS"
+    # @param [Float] weight weight in ounces
+    # @param [Float] length length in inches
+    # @param [Float] height height in inches
+    # @param [Float] thickness thickness in inches
+    # @param [Hash] non_machinable_indicators hash of non-machinable flags
+    def letter_price(processing_category:, weight:, length: 6.0, height: 4.0, thickness: 0.25, non_machinable_indicators: {})
+      conn.post("/prices/v3/letter-rates/search", {
+        weight: weight,
+        length: length,
+        height: height,
+        thickness: thickness,
+        processingCategory: processing_category,
+        mailingDate: Date.today.to_s,
+        nonMachinableIndicators: non_machinable_indicators.presence,
+      }.compact_blank).body
+    end
+
+    # Fetches international First-Class Mail letter/flat price
+    # @param [String] processing_category "LETTERS" or "FLATS"
+    # @param [Float] weight weight in ounces
+    # @param [String] destination_country_code ISO 2-letter country code
+    # @param [Float] length length in inches
+    # @param [Float] height height in inches
+    # @param [Float] thickness thickness in inches
+    def international_letter_price(processing_category:, weight:, destination_country_code:, length: 6.0, height: 4.0, thickness: 0.25)
+      conn.post("/international-prices/v3/letter-rates/search", {
+        weight: weight,
+        length: length,
+        height: height,
+        thickness: thickness,
+        processingCategory: processing_category,
+        destinationCountryCode: destination_country_code,
+        mailingDate: Date.today.to_s,
+      }.compact_blank).body
+    end
+
     private
 
     def api_host
