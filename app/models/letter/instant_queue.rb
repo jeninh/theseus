@@ -48,6 +48,7 @@ class Letter::InstantQueue < Letter::Queue
   validates :template, presence: true
   validates :postage_type, presence: true, inclusion: { in: %w[indicia stamps international_origin] }
   validates :usps_payment_account_id, presence: true, if: :indicia?
+  validates :hcb_payment_account_id, presence: true, if: :indicia?
   validates :letter_mailing_date, presence: true, if: :indicia?
 
   # Associations
@@ -96,14 +97,10 @@ class Letter::InstantQueue < Letter::Queue
           )
           Rails.logger.info("Created indicium #{indicium.id} for letter #{letter.id}")
 
-          if hcb_payment_account.present?
-            Rails.logger.info("Using HCB payment account #{hcb_payment_account.id} for letter #{letter.id}")
-            service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
-            unless service.call
-              raise "HCB payment failed: #{service.errors.join(', ')}"
-            end
-          else
-            indicium.buy!
+          Rails.logger.info("Using HCB payment account #{hcb_payment_account.id} for letter #{letter.id}")
+          service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
+          unless service.call
+            raise "HCB payment failed: #{service.errors.join(', ')}"
           end
           Rails.logger.info("Successfully bought indicium for letter #{letter.id}")
 

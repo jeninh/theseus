@@ -113,6 +113,21 @@
                                 { selected: USPS::PaymentAccount.first&.id },
                                 { class: "form-select" } %>
         </div>
+        <div class="form-group hcb-payment-account-field" style="display: none;">
+          <%= f.label :hcb_payment_account_id, "Pay with HCB Organization", class: "form-label" %>
+          <% if current_user.hcb_payment_accounts.any? %>
+            <%= f.collection_select :hcb_payment_account_id,
+                                  current_user.hcb_payment_accounts,
+                                  :id,
+                                  :organization_name,
+                                  { prompt: "Select an organization" },
+                                  { class: "form-select", required: true } %>
+          <% else %>
+            <p class="text-sm text-gray-600">
+              <%= link_to "Connect your HCB account", new_back_office_hcb_oauth_connection_path %> to purchase indicia.
+            </p>
+          <% end %>
+        </div>
         <div class="form-group">
           <%= f.label :template_cycle, "Template Cycle", class: "form-label" %>
           <%= f.hidden_field :template_cycle, id: "selected_template", value: params[:template] %>
@@ -143,10 +158,12 @@
     const usPostageSelect = document.querySelector('#batch_us_postage_type');
     const intlPostageSelect = document.querySelector('#batch_intl_postage_type');
     const paymentAccountField = document.querySelector('.payment-account-field');
+    const hcbPaymentAccountField = document.querySelector('.hcb-payment-account-field');
 
     function updatePaymentAccountVisibility() {
       const showPaymentAccount = usPostageSelect.value === 'indicia' || intlPostageSelect.value === 'indicia';
       paymentAccountField.style.display = showPaymentAccount ? 'block' : 'none';
+      hcbPaymentAccountField.style.display = showPaymentAccount ? 'block' : 'none';
     }
 
     function updatePostageCosts() {

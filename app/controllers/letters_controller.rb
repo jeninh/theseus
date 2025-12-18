@@ -187,22 +187,16 @@ class LettersController < ApplicationController
 
     hcb_payment_account = current_user.hcb_payment_accounts.find_by(id: params[:hcb_payment_account_id])
 
-    if hcb_payment_account.present?
-      service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
-      if service.call
-        redirect_to @letter, notice: "Indicia purchased successfully (charged to #{hcb_payment_account.organization_name})."
-      else
-        redirect_to @letter, alert: service.errors.join(", ")
-      end
-    elsif current_user.can_use_indicia?
-      begin
-        indicium.buy!
-        redirect_to @letter, notice: "Indicia purchased successfully."
-      rescue => e
-        redirect_to @letter, alert: "Failed to purchase indicia: #{e.message}"
-      end
-    else
+    if hcb_payment_account.blank?
       redirect_to @letter, alert: "You must select an HCB payment account to purchase indicia."
+      return
+    end
+
+    service = HCB::IndiciumPurchaseService.new(indicium: indicium, hcb_payment_account: hcb_payment_account)
+    if service.call
+      redirect_to @letter, notice: "Indicia purchased successfully (charged to #{hcb_payment_account.organization_name})."
+    else
+      redirect_to @letter, alert: service.errors.join(", ")
     end
   end
 

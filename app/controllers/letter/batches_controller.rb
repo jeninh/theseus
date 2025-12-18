@@ -101,9 +101,16 @@ class Letter::BatchesController < BaseBatchesController
           redirect_to process_letter_batch_path(@batch), alert: "Please select a valid payment account when using indicia"
           return
         end
-      end
 
-      hcb_payment_account = current_user.hcb_payment_accounts.find_by(id: letter_batch_params[:hcb_payment_account_id])
+        hcb_payment_account = current_user.hcb_payment_accounts.find_by(id: letter_batch_params[:hcb_payment_account_id])
+
+        if hcb_payment_account.nil?
+          redirect_to process_letter_batch_path(@batch), alert: "Please select an HCB payment account to purchase indicia"
+          return
+        end
+      else
+        hcb_payment_account = nil
+      end
 
       begin
         @batch.process!(
