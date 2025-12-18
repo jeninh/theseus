@@ -238,6 +238,7 @@ GEM
       hashids (~> 1.0)
     hashids (1.0.6)
     hashie (5.0.0)
+    hcbv4 (0.1.1)
     honeybadger (5.28.0)
       logger
       ostruct
@@ -719,6 +720,7 @@ DEPENDENCIES
   foreman (~> 0.88.1)
   good_job (~> 4.11)
   hashid-rails (~> 1.4)
+  hcbv4 (~> 0.1)
   honeybadger (~> 5.28)
   http (~> 5.2)
   ivymeter (~> 0.1.0)

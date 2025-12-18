@@ -5,6 +5,7 @@
 #  id                     :bigint           not null, primary key
 #  back_office            :boolean          default(FALSE)
 #  can_impersonate_public :boolean
+#  can_use_indicia        :boolean          default(FALSE), not null
 #  can_warehouse          :boolean
 #  email                  :string
 #  icon_url               :string
@@ -12,13 +13,14 @@
 #  username               :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  hca_id                 :string
 #  home_mid_id            :bigint           default(1), not null
 #  home_return_address_id :bigint           default(1), not null
-#  hca_id                 :string
 #  slack_id               :string
 #
 # Indexes
 #
+#  index_users_on_hca_id                  (hca_id) UNIQUE
 #  index_users_on_home_mid_id             (home_mid_id)
 #  index_users_on_home_return_address_id  (home_return_address_id)
 #

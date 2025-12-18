@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_11_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_18_193953) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -268,6 +268,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_11_000001) do
     t.index ["scheduled_at"], name: "index_good_jobs_on_scheduled_at", where: "(finished_at IS NULL)"
   end
 
+  create_table "hcb_oauth_connections", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "access_token_ciphertext"
+    t.text "refresh_token_ciphertext"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_hcb_oauth_connections_on_user_id"
+  end
+
+  create_table "hcb_payment_accounts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "hcb_oauth_connection_id", null: false
+    t.string "organization_id"
+    t.string "organization_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["hcb_oauth_connection_id"], name: "index_hcb_payment_accounts_on_hcb_oauth_connection_id"
+    t.index ["user_id"], name: "index_hcb_payment_accounts_on_user_id"
+  end
+
   create_table "letter_queues", force: :cascade do |t|
     t.string "name"
     t.string "slug"
@@ -414,6 +435,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_11_000001) do
     t.bigint "home_mid_id", default: 1, null: false
     t.bigint "home_return_address_id", default: 1, null: false
     t.string "hca_id"
+    t.boolean "can_use_indicia", default: false, null: false
     t.index ["hca_id"], name: "index_users_on_hca_id", unique: true
     t.index ["home_mid_id"], name: "index_users_on_home_mid_id"
     t.index ["home_return_address_id"], name: "index_users_on_home_return_address_id"
@@ -577,6 +599,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_11_000001) do
   add_foreign_key "batches", "users"
   add_foreign_key "batches", "usps_mailer_ids", column: "letter_mailer_id_id"
   add_foreign_key "batches", "warehouse_templates"
+  add_foreign_key "hcb_oauth_connections", "users"
+  add_foreign_key "hcb_payment_accounts", "hcb_oauth_connections"
+  add_foreign_key "hcb_payment_accounts", "users"
   add_foreign_key "letter_queues", "return_addresses", column: "letter_return_address_id"
   add_foreign_key "letter_queues", "users"
   add_foreign_key "letter_queues", "usps_mailer_ids", column: "letter_mailer_id_id"
