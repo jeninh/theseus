@@ -1,29 +1,32 @@
-<div class="flex flex-col gap-2">
-  <%= form_with(url: buy_indicia_letter_path(letter), method: :post) do |form| %>
-    <div class="form-group">
-      <label>USPS Payment Account</label>
+<%= form_with(url: buy_indicia_letter_path(letter), method: :post, class: "space-y-4") do |form| %>
+  <% if current_user.hcb_payment_accounts.any? %>
+    <div>
+      <label class="block text-sm text-gray-600 mb-1">Pay with HCB Organization</label>
+      <%= form.collection_select :hcb_payment_account_id,
+        current_user.hcb_payment_accounts,
+        :id,
+        :organization_name,
+        { prompt: "Select organization..." },
+        { required: true, class: "w-full" } %>
+    </div>
+
+    <div>
+      <label class="block text-sm text-gray-600 mb-1">USPS Payment Account</label>
       <%= form.collection_select :usps_payment_account_id, 
         USPS::PaymentAccount.all, 
         :id, 
         :name, 
-        { prompt: "Select a payment account", selected: USPS::PaymentAccount.first&.id },
-        { required: true } %>
+        { selected: USPS::PaymentAccount.first&.id },
+        { required: true, class: "w-full" } %>
     </div>
-    <% if current_user.hcb_payment_accounts.any? %>
-      <div class="form-group">
-        <label>Pay with HCB Organization</label>
-        <%= form.collection_select :hcb_payment_account_id,
-          current_user.hcb_payment_accounts,
-          :id,
-          :organization_name,
-          { prompt: "Select an organization" },
-          { required: true } %>
-      </div>
-    <% else %>
-      <p class="text-sm text-gray-600">
-        <%= link_to "Connect your HCB account", new_back_office_hcb_oauth_connection_path %> to purchase indicia.
-      </p>
-    <% end %>
-    <%= form.submit "Buy Indicia", class: "primary", disabled: current_user.hcb_payment_accounts.empty? %>
+
+    <%= form.submit "Buy Indicia", class: "btn success w-full" %>
+  <% else %>
+    <div class="text-center py-4">
+      <p class="text-sm text-gray-600 mb-3">Connect your HCB account to purchase postage.</p>
+      <%= link_to new_back_office_hcb_oauth_connection_path, class: "btn btn-small" do %>
+        Connect HCB
+      <% end %>
+    </div>
   <% end %>
-</div>
+<% end %>

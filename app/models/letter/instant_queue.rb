@@ -53,6 +53,7 @@ class Letter::InstantQueue < Letter::Queue
 
   # Associations
   belongs_to :usps_payment_account, class_name: "USPS::PaymentAccount", optional: true
+  belongs_to :hcb_payment_account, class_name: "HCB::PaymentAccount", optional: true
 
   # Scopes
   default_scope { where(type: "Letter::InstantQueue") }
@@ -104,8 +105,8 @@ class Letter::InstantQueue < Letter::Queue
           transfer_service = HCB::TransferService.new(
             hcb_payment_account: hcb_payment_account,
             amount_cents: cost_cents,
-            name: "Postage for #{letter.public_id} #{indicium.public_id} #{Rails.application.routes.url_helpers.letter_path(letter)}",
-            memo: "[theseus] postage for a #{letter.processing_category}",
+            name: "Postage for #{letter.public_id} #{indicium.public_id} (#{slug}) #{Rails.application.routes.url_helpers.letter_path(letter)}",
+            memo: "[theseus] postage for a #{letter.processing_category} via queue #{name}",
           )
           transfer = transfer_service.call
           unless transfer

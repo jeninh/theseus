@@ -133,10 +133,13 @@
   function togglePaymentAccount(select) {
     const paymentAccountField = document.getElementById('paymentAccountField');
     const hcbPaymentAccountField = document.getElementById('hcbPaymentAccountField');
-    paymentAccountField.style.display = select.value === "indicia" ? "block" : "none";
-    hcbPaymentAccountField.style.display = select.value === "indicia" ? "block" : "none";
+    if (paymentAccountField) paymentAccountField.style.display = select.value === "indicia" ? "block" : "none";
+    if (hcbPaymentAccountField) hcbPaymentAccountField.style.display = select.value === "indicia" ? "block" : "none";
   }
 
-  toggleQueueType(document.getElementById('letter_queue_type'));
-  togglePaymentAccount(document.getElementById('letter_queue_postage_type'));
+  const typeSelect = document.getElementById('letter_queue_type');
+  if (typeSelect) toggleQueueType(typeSelect);
+  
+  const postageSelect = document.getElementById('letter_queue_postage_type') || document.getElementById('letter_instant_queue_postage_type');
+  if (postageSelect) togglePaymentAccount(postageSelect);
 </script>

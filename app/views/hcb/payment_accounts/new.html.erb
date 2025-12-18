@@ -1,23 +1,51 @@
-<% content_for :title do %>
-  Add HCB Payment Account
-<% end %>
+<% content_for :title, "Add HCB Organization" %>
 
-<h1>Add HCB Payment Account</h1>
+<div class="container">
+  <header class="page-header mb-6">
+    <div class="flex items-center gap-4">
+      <%= link_to "← Back", hcb_payment_accounts_path, class: "text-gray-500 hover:text-gray-700" %>
+      <h1>Add Organization</h1>
+    </div>
+  </header>
 
-<p>Select an organization to use for paying postage:</p>
+  <div class="max-w-lg">
+    <% if @organizations.any? %>
+      <article>
+        <header>
+          <h2>Select Organization</h2>
+        </header>
+        <div class="p-4">
+          <p class="text-gray-600 mb-4">Choose which HCB organization to use for paying postage.</p>
+          
+          <%= form_with url: hcb_payment_accounts_path, method: :post do |f| %>
+            <div class="space-y-3 mb-6">
+              <% @organizations.each do |org| %>
+                <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50 has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
+                  <%= f.radio_button :organization_id, org.id, class: "mr-3" %>
+                  <span class="font-medium"><%= org.name %></span>
+                </label>
+              <% end %>
+            </div>
 
-<%= form_with url: hcb_payment_accounts_path, method: :post do |f| %>
-  <fieldset>
-    <%= f.label :organization_id, "Organization" %>
-    <%= f.select :organization_id, @organizations.map { |org| [org.name, org.id] }, { prompt: "Select an organization..." } %>
-  </fieldset>
-
-  <%= f.submit "Add Payment Account", class: "btn success btn-small" %>
-  <%= link_to "Cancel", hcb_payment_accounts_path, class: "btn btn-small" %>
-<% end %>
-
-<% if @organizations.empty? %>
-  <div class="notice warning">
-    <p>No organizations found. Make sure you have admin access to at least one HCB organization.</p>
+            <div class="flex gap-3">
+              <%= f.submit "Add Organization", class: "btn success" %>
+              <%= link_to "Cancel", hcb_payment_accounts_path, class: "btn btn-small" %>
+            </div>
+          <% end %>
+        </div>
+      </article>
+    <% else %>
+      <article>
+        <header>
+          <h2>No Organizations Available</h2>
+        </header>
+        <div class="p-4">
+          <p class="text-gray-600 mb-4">
+            You don't have admin access to any HCB organizations, or all your organizations are already linked.
+          </p>
+          <%= link_to "← Back", hcb_payment_accounts_path, class: "btn btn-small" %>
+        </div>
+      </article>
+    <% end %>
   </div>
-<% end %>
+</div>
