@@ -36,7 +36,7 @@ class LetterPolicy < ApplicationPolicy
   end
 
   def buy_indicia?
-    record_belongs_to_user || user_is_admin
+    user&.can_use_indicia? && (record_belongs_to_user || user_is_admin)
   end
 
   def mark_printed?

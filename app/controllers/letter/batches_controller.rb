@@ -95,6 +95,8 @@ class Letter::BatchesController < BaseBatchesController
 
       # Only require payment account if indicia is selected
       if letter_batch_params[:us_postage_type] == "indicia" || letter_batch_params[:intl_postage_type] == "indicia"
+        authorize @batch, :process_batch_with_indicia?, policy_class: Letter::BatchPolicy
+
         payment_account = USPS::PaymentAccount.find_by(id: letter_batch_params[:usps_payment_account_id])
 
         if payment_account.nil?

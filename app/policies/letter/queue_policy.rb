@@ -9,7 +9,11 @@ class Letter::QueuePolicy < ApplicationPolicy
     user.present?
   end
 
-  alias_method :create_instant_letter?, :create_letter?
+  def create_instant_letter?
+    return false unless user.present?
+    return true unless record.indicia?
+    user.can_use_indicia?
+  end
 
   def batch?
     record_belongs_to_user || user_is_admin

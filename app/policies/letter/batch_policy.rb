@@ -17,7 +17,13 @@ class Letter::BatchPolicy < ApplicationPolicy
 
   alias_method :set_mapping?, :map_fields?
   alias_method :process_form?, :map_fields?
+
   alias_method :process_batch?, :map_fields?
+
+  def process_batch_with_indicia?
+    user.present? && user.can_use_indicia?
+  end
+
   alias_method :mark_printed?, :update?
   alias_method :mark_mailed?, :mark_printed?
 
