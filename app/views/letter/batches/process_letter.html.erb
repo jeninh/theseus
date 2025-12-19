@@ -60,8 +60,8 @@
         <% end %>
       </div>
     </div>
-    <%= form_with(model: @batch, url: process_letter_batch_path(@batch), method: :post) do |f| %>
-      <div>
+    <%= form_with(model: @batch, url: process_letter_batch_path(@batch), method: :post, data: { controller: "postage-form" }) do |f| %>
+      <div x-data="{ usPostageType: 'indicia', intlPostageType: 'indicia' }">
         <div class="form-group">
           <%= f.label :letter_mailing_date, "Mailing Date", class: "form-label" %>
           <%= f.date_field :letter_mailing_date, 
@@ -71,28 +71,28 @@
             required: true %>
         </div>
         <% if @batch.letter_return_address&.us? %>
-          <div>
+          <div style="margin-bottom: 1.5rem;">
             <h4 class="text-sm font-medium mb-2">US Mail</h4>
             <div class="space-y-2">
               <div class="form-check">
-                <%= f.radio_button :us_postage_type, "stamps", class: "form-check-input", checked: true %>
+                <%= f.radio_button :us_postage_type, "stamps", class: "form-check-input", "@change": "usPostageType = 'stamps'" %>
                 <%= f.label :us_postage_type_stamps, "Stamps", class: "form-check-label" %>
               </div>
               <div class="form-check">
-                <%= f.radio_button :us_postage_type, "indicia", class: "form-check-input" %>
+                <%= f.radio_button :us_postage_type, "indicia", class: "form-check-input", checked: true, "@change": "usPostageType = 'indicia'" %>
                 <%= f.label :us_postage_type_indicia, "Indicia (Metered)", class: "form-check-label" %>
               </div>
             </div>
           </div>
-          <div>
+          <div style="margin-bottom: 1.5rem;">
             <h4 class="text-sm font-medium mb-2">International Mail</h4>
             <div class="space-y-2">
               <div class="form-check">
-                <%= f.radio_button :intl_postage_type, "stamps", class: "form-check-input", checked: true %>
+                <%= f.radio_button :intl_postage_type, "stamps", class: "form-check-input", "@change": "intlPostageType = 'stamps'" %>
                 <%= f.label :intl_postage_type_stamps, "Stamps", class: "form-check-label" %>
               </div>
               <div class="form-check">
-                <%= f.radio_button :intl_postage_type, "indicia", class: "form-check-input" %>
+                <%= f.radio_button :intl_postage_type, "indicia", class: "form-check-input", checked: true, "@change": "intlPostageType = 'indicia'" %>
                 <%= f.label :intl_postage_type_indicia, "Indicia (Metered)", class: "form-check-label" %>
               </div>
             </div>
@@ -104,7 +104,7 @@
           <%= f.hidden_field :us_postage_type, value: "international_origin" %>
           <%= f.hidden_field :intl_postage_type, value: "international_origin" %>
         <% end %>
-        <div class="form-group payment-account-field" style="display: none;">
+        <div class="form-group" style="margin-top: 1.5rem;" x-show="usPostageType === 'indicia' || intlPostageType === 'indicia'" x-cloak>
           <%= f.label :usps_payment_account_id, "USPS Payment Account", class: "form-label" %>
           <%= f.collection_select :usps_payment_account_id,
                                 USPS::PaymentAccount.all,
@@ -113,7 +113,7 @@
                                 { selected: USPS::PaymentAccount.first&.id },
                                 { class: "form-select" } %>
         </div>
-        <div class="form-group hcb-payment-account-field" style="display: none;">
+        <div class="form-group" style="margin-top: 1.5rem;" x-show="usPostageType === 'indicia' || intlPostageType === 'indicia'" x-cloak>
           <%= f.label :hcb_payment_account_id, "Pay with HCB Organization", class: "form-label" %>
           <% if current_user.hcb_payment_accounts.any? %>
             <%= f.collection_select :hcb_payment_account_id,
@@ -155,20 +155,19 @@
 </div>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const usPostageSelect = document.querySelector('#batch_us_postage_type');
-    const intlPostageSelect = document.querySelector('#batch_intl_postage_type');
-    const paymentAccountField = document.querySelector('.payment-account-field');
-    const hcbPaymentAccountField = document.querySelector('.hcb-payment-account-field');
+    const usPostageRadios = document.querySelectorAll('input[name="batch[us_postage_type]"]');
+    const intlPostageRadios = document.querySelectorAll('input[name="batch[intl_postage_type]"]');
 
-    function updatePaymentAccountVisibility() {
-      const showPaymentAccount = usPostageSelect.value === 'indicia' || intlPostageSelect.value === 'indicia';
-      paymentAccountField.style.display = showPaymentAccount ? 'block' : 'none';
-      hcbPaymentAccountField.style.display = showPaymentAccount ? 'block' : 'none';
+    function getSelectedPostageType(radios) {
+      for (const radio of radios) {
+        if (radio.checked) return radio.value;
+      }
+      return null;
     }
 
     function updatePostageCosts() {
-      const usPostageType = document.querySelector('#batch_us_postage_type').value;
-      const intlPostageType = document.querySelector('#batch_intl_postage_type').value;
+      const usPostageType = getSelectedPostageType(usPostageRadios);
+      const intlPostageType = getSelectedPostageType(intlPostageRadios);
 
       fetch(`<%= update_costs_letter_batch_path(@batch) %>`, {
         method: 'POST',
@@ -183,19 +182,16 @@
       })
       .then(response => response.json())
       .then(data => {
-        // Update costs
         document.getElementById('total_postage_cost').textContent = `$${data.total_cost.toFixed(2)}`;
         document.getElementById('us_cost_difference').textContent = `$${data.cost_difference.us.toFixed(2)}`;
         document.getElementById('intl_cost_difference').textContent = `$${data.cost_difference.intl.toFixed(2)}`;
 
-        // Update letter counts
         document.getElementById('us_letter_count').textContent = data.us_count;
         document.getElementById('intl_letter_count').textContent = data.intl_count;
 
         const usDiffElement = document.getElementById('us_cost_difference');
         const intlDiffElement = document.getElementById('intl_cost_difference');
 
-        // Update US cost difference styling
         if (data.cost_difference.us < 0) {
           usDiffElement.classList.remove('text-red-600');
           usDiffElement.classList.add('text-green-600');
@@ -204,7 +200,6 @@
           usDiffElement.classList.add('text-red-600');
         }
 
-        // Update international cost difference styling
         if (data.cost_difference.intl < 0) {
           intlDiffElement.classList.remove('text-red-600');
           intlDiffElement.classList.add('text-green-600');
@@ -215,22 +210,16 @@
       });
     }
 
-    document.querySelector('#batch_us_postage_type').addEventListener('change', () => {
-      updatePaymentAccountVisibility();
-      updatePostageCosts();
-    });
-
-    document.querySelector('#batch_intl_postage_type').addEventListener('change', () => {
-      updatePaymentAccountVisibility();
-      updatePostageCosts();
-    });
-
-    // Initial check
-    updatePaymentAccountVisibility();
+    usPostageRadios.forEach(radio => radio.addEventListener('change', updatePostageCosts));
+    intlPostageRadios.forEach(radio => radio.addEventListener('change', updatePostageCosts));
     updatePostageCosts();
   });
 </script>
 <style>
+  [x-cloak] {
+    display: none !important;
+  }
+
   .container {
     max-width: 800px;
     margin: 0 auto;
