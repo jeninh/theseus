@@ -25,10 +25,4 @@
     <strong>QR Code:</strong>
     <%= instant_queue.include_qr_code ? "Yes" : "No" %>
   </p>
-  <% if instant_queue.letter_mailing_date %>
-    <p>
-      <strong>Mailing Date:</strong>
-      <%= instant_queue.letter_mailing_date.strftime("%B %d, %Y") %>
-    </p>
-  <% end %>
 </div>

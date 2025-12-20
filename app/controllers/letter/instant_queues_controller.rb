@@ -32,7 +32,6 @@ class Letter::InstantQueuesController < Letter::QueuesController
       :usps_payment_account_id,
       :hcb_payment_account_id,
       :include_qr_code,
-      :letter_mailing_date,
       tags: [],
     )
   end

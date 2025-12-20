@@ -42,14 +42,11 @@
 #  fk_rails_...  (usps_payment_account_id => usps_payment_accounts.id)
 #
 class Letter::InstantQueue < Letter::Queue
-  # TODO: drop mailing date, wtf?
-
   # Validations
   validates :template, presence: true
   validates :postage_type, presence: true, inclusion: { in: %w[indicia stamps international_origin] }
   validates :usps_payment_account_id, presence: true, if: :indicia?
   validates :hcb_payment_account_id, presence: true, if: :indicia?
-  validates :letter_mailing_date, presence: true, if: :indicia?
 
   # Associations
   belongs_to :usps_payment_account, class_name: "USPS::PaymentAccount", optional: true
