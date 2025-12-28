@@ -645,6 +645,7 @@ Rails.application.routes.draw do
 
   scope :api do
     defaults format: :json do
+      post "revoke", to: "api/revocations#create"
       namespace :public do
         scope "", module: :api do
           namespace :v1 do
