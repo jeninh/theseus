@@ -8,6 +8,7 @@ class API::RevocationsController < ActionController::API
     public_api_key = Public::APIKey.accessible.find_by(token: t)
 
     if public_api_key.present?
+      public_api_key.revoke!
       user = public_api_key.public_user
       return render json: {
         success: true,
@@ -18,6 +19,7 @@ class API::RevocationsController < ActionController::API
     internal_api_key = APIKey.accessible.find_by(token: t)
 
     if internal_api_key.present?
+      internal_api_key.revoke!
       user = internal_api_key.user
       return render json: {
         success: true,
