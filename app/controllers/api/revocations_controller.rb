@@ -12,7 +12,8 @@ class API::RevocationsController < ActionController::API
       user = public_api_key.public_user
       return render json: {
         success: true,
-        owner_email: user.email
+        owner_email: user.email,
+        key_name: public_api_key.name
       }
     end
 
@@ -23,7 +24,8 @@ class API::RevocationsController < ActionController::API
       user = internal_api_key.user
       return render json: {
         success: true,
-        owner_email: user.email
+        owner_email: user.email,
+        key_name: internal_api_key.pretty_name
       }
     end
 
