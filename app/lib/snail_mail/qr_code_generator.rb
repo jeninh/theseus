@@ -36,9 +36,8 @@ module SnailMail
         pdf.image io, at: [x, y], width: size, height: size
       rescue => e
         Rails.logger.error("QR code generation failed: #{e.message}")
-        uuid = Honeybadger.notify(e)
-        # Fallback to a text label if QR code fails
-        pdf.text_box "QR Error (error: #{uuid})", at: [x, y], width: size, height: size
+        event_id = Sentry.capture_exception(e)
+        pdf.text_box "QR Error (error: #{event_id})", at: [x, y], width: size, height: size
       end
     end
   end

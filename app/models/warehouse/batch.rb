@@ -102,8 +102,8 @@ class Warehouse::Batch < Batch
       begin
         Zenventory.create_customer_order(update_hash)
       rescue Zenventory::ZenventoryError => e
-        uuid = Honeybadger.notify(e)
-        errors.add(:base, "couldn't create order, Zenventory said: #{e.message} (error: #{uuid})")
+        event_id = Sentry.capture_exception(e)
+        errors.add(:base, "couldn't create order, Zenventory said: #{e.message} (error: #{event_id})")
         throw(:abort)
       end
     end

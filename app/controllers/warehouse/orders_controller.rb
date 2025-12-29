@@ -38,11 +38,13 @@ class Warehouse::OrdersController < ApplicationController
     begin
       @warehouse_order.dispatch!
     rescue Zenventory::ZenventoryError => e
-      uuid = Honeybadger.notify(e)
-      redirect_to @warehouse_order, alert: "zenventory said \"#{e.message}\" (please report EID: #{uuid})"
+      event_id = Sentry.capture_exception(e)
+      redirect_to @warehouse_order, alert: "zenventory said \"#{e.message}\" (error: #{event_id})"
+      return
     rescue AASM::InvalidTransition => e
-      uuid = Honeybadger.notify(e)
-      redirect_to @warehouse_order, alert: "couldn't dispatch order! wrong state? (please report EID: #{uuid})"
+      event_id = Sentry.capture_exception(e)
+      redirect_to @warehouse_order, alert: "couldn't dispatch order! wrong state? (error: #{event_id})"
+      return
     end
     redirect_to @warehouse_order, flash: { success: "successfully sent to warehouse!" }
   end

@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
   def impersonate
     unless current_user.admin?
       redirect_to root_path, alert: "you are not authorized to impersonate users. this incident has been reported :-P"
-      Honeybadger.notify("Impersonation attempt by #{current_user.username} to #{params[:id]}")
+      Sentry.capture_message("Impersonation attempt by #{current_user.username} to #{params[:id]}", level: :warning)
       return
     end
 
@@ -44,8 +44,8 @@ class SessionsController < ApplicationController
       @user = User.from_hack_club_auth(auth)
     rescue => e
       Rails.logger.error "Error creating user from Hack Club Auth: #{e.message}"
-      uuid = Honeybadger.notify(e)
-      redirect_to login_path, alert: "error authenticating! (error: #{uuid})"
+      event_id = Sentry.capture_exception(e)
+      redirect_to login_path, alert: "error authenticating! (error: #{event_id})"
       return
     end
 

@@ -105,10 +105,9 @@ module GeocodingService
         key: ENV["HACKCLUB_GEOCODER_API_KEY"],
       })
 
-      # Handle error responses
       if response.body.key?("error")
         Rails.logger.error "Hack Club Geocoder error: #{response.body["error"]}"
-        Honeybadger.notify("Geocoding error: #{response.body["error"]}")
+        Sentry.capture_message("Geocoding error: #{response.body["error"]}")
         return nil
       end
 
@@ -123,7 +122,7 @@ module GeocodingService
       }
     rescue => e
       Rails.logger.error "Hack Club Geocoder request failed: #{e.message}"
-      Honeybadger.notify(e)
+      Sentry.capture_exception(e)
       nil
     end
 

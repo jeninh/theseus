@@ -239,9 +239,6 @@ GEM
     hashids (1.0.6)
     hashie (5.0.0)
     hcbv4 (0.1.1)
-    honeybadger (5.28.0)
-      logger
-      ostruct
     http (5.2.0)
       addressable (~> 2.8)
       base64 (~> 0.1)
@@ -570,6 +567,12 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sentry-rails (6.2.0)
+      railties (>= 5.2.0)
+      sentry-ruby (~> 6.2.0)
+    sentry-ruby (6.2.0)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
     slack-notifier (2.4.0)
     slim (5.2.1)
       temple (~> 0.10.0)
@@ -721,7 +724,6 @@ DEPENDENCIES
   good_job (~> 4.11)
   hashid-rails (~> 1.4)
   hcbv4 (~> 0.1)
-  honeybadger (~> 5.28)
   http (~> 5.2)
   ivymeter (~> 0.1.0)
   jb (~> 0.8.2)
@@ -755,6 +757,8 @@ DEPENDENCIES
   select2-rails (~> 4.0)
   selectize-rails (~> 0.12.6)
   selenium-webdriver
+  sentry-rails
+  sentry-ruby
   slack-notifier (~> 2.4)
   slim-rails (~> 3.7)
   snail (~> 2.3)

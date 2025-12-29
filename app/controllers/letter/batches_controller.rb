@@ -128,8 +128,8 @@ class Letter::BatchesController < BaseBatchesController
 
         redirect_to letter_batch_path(@batch, print_now: letter_batch_params[:print_immediately]), notice: "Batch processed successfully"
       rescue => e
-        uuid = Honeybadger.notify(e)
-        redirect_to process_letter_batch_path(@batch), alert: "Failed to process batch: #{e.message} (please report EID: #{uuid})"
+        event_id = Sentry.capture_exception(e)
+        redirect_to process_letter_batch_path(@batch), alert: "Failed to process batch: #{e.message} (error: #{event_id})"
       end
     end
   end

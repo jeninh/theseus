@@ -34,16 +34,14 @@ module FaradayMiddleware
     def on_complete(env)
       unless env.response.success?
         unless env.response.body.respond_to?(:dig)
-          uuid = Honeybadger.notify(USPS::USPSError.new(env.response.body))
-          raise USPS::USPSError, "#{env.response.body} (please report EID: #{uuid})"
+          raise USPS::USPSError, env.response.body.to_s
         end
         if env.response.body.dig(:error, :message) == "Address Not Found."
           raise USPS::NxAddress
         elsif env.response.body.dig(:error, :message) == "Invalid Zip Code."
           raise USPS::NxZIP
         else
-          uuid = Honeybadger.notify(USPS::USPSError.new(env.response.body))
-          raise USPS::USPSError, "#{env.response.body} (please report EID: #{uuid})"
+          raise USPS::USPSError, env.response.body.to_s
         end
       end
     end

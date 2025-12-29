@@ -26,8 +26,7 @@ module SnailMail
         ).barcode_letters
       rescue ArgumentError => e
         Rails.logger.warn("Bad IMb input: #{e.message} @ MID #{mailer_id} SN #{serial_number} RC #{routing_code}")
-        uuid = Honeybadger.notify(e)
-        Rails.logger.warn("IMb error (please report EID: #{uuid})")
+        Sentry.capture_exception(e)
         ""
       end
     end

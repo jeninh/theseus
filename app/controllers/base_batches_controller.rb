@@ -64,10 +64,9 @@ class BaseBatchesController < ApplicationController
       begin
         @batch.run_map!
       rescue StandardError => e
-        raise
         Rails.logger.warn(e)
-        uuid = Honeybadger.notify(e)
-        redirect_to send("#{@batch.class.name.split("::").first.downcase}_batch_path", @batch), flash: { alert: "error mapping fields! #{e.message} (please report EID: #{uuid})" }
+        event_id = Sentry.capture_exception(e)
+        redirect_to send("#{@batch.class.name.split("::").first.downcase}_batch_path", @batch), flash: { alert: "error mapping fields! #{e.message} (error: #{event_id})" }
         return
       end
       redirect_to send("process_confirm_#{@batch.class.name.split("::").first.downcase}_batch_path", @batch), notice: "Field mapping saved. Please review and process your batch."

@@ -173,8 +173,8 @@ class Warehouse::Order < ApplicationRecord
       }.compact_blank
       Zenventory.update_customer_order(zenventory_id, update_hash) unless update_hash.empty?
     rescue Zenventory::ZenventoryError => e
-      uuid = Honeybadger.notify(e)
-      errors.add(:base, "couldn't edit order, Zenventory said: #{e.message} (error: #{uuid})")
+      event_id = Sentry.capture_exception(e)
+      errors.add(:base, "couldn't edit order, Zenventory said: #{e.message} (error: #{event_id})")
       throw(:abort)
     end
   end

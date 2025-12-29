@@ -98,11 +98,13 @@
             Please poke <a href="https://hackclub.slack.com/team/U06QK6AG3RD" target="_blank">@nora</a> with the
             following error ID and what you were trying to do when this happened.
         </p>
+        <% if @sentry_event_id.present? %>
         <p class="error-id">
             <b>Error ID:</b><span class="error-id-text"
-                onclick="navigator.clipboard.writeText(this.textContent); this.textContent = 'copied!'"><!-- SENTRY ERROR --></span>
+                onclick="navigator.clipboard.writeText(this.textContent); this.textContent = 'copied!'"><%= @sentry_event_id %></span>
             (click to copy)
         </p>
+        <% end %>
         <a class="bootloader-link" href="/"><- return to homepage</a>
     </div>
 </body>

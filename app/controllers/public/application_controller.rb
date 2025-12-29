@@ -5,9 +5,8 @@ module Public
     layout "public"
 
     before_action do
-      Honeybadger.context({
-        user_id: current_public_user&.id,
-        user_email: current_public_user&.email,
+      Sentry.set_user(id: current_public_user&.id, email: current_public_user&.email)
+      Sentry.set_context("impersonation", {
         real_user_id: current_user&.id,
         real_user_email: current_user&.email,
         impersonator_user_id: session[:public_impersonator_user_id],

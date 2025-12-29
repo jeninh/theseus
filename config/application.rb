@@ -45,5 +45,8 @@ module Theseus
       expire_after: 30.days,
       secure: Rails.env.production?,
       httponly: true
+
+    # Use dynamic error pages so we can show Sentry event IDs
+    config.exceptions_app = routes
   end
 end

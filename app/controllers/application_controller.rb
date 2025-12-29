@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :user_signed_in?
 
-  before_action :authenticate_user!, :set_honeybadger_context
+  before_action :authenticate_user!, :set_sentry_context
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
@@ -20,11 +20,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_honeybadger_context
-    Honeybadger.context({
-      user_id: current_user&.id,
-      user_email: current_user&.email,
-    })
+  def set_sentry_context
+    Sentry.set_user(id: current_user&.id, email: current_user&.email)
   end
 
   rescue_from Pundit::NotAuthorizedError do |e|

@@ -159,7 +159,8 @@ gem "ruby-openai", "~> 8.1"
 
 gem "parallel", "~> 1.26"
 
-gem "honeybadger", "~> 5.28"
+gem "sentry-ruby"
+gem "sentry-rails"
 
 gem "rmagick", "~> 5.3"
 
