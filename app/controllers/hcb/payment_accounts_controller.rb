@@ -9,6 +9,12 @@ class HCB::PaymentAccountsController < ApplicationController
     redirect_to hcb_payment_accounts_path, alert: "Failed to load HCB organizations: #{e.message} (#{event_id})"
   end
 
+  rescue_from OAuth2::Error do |e|
+    Sentry.capture_exception(e, extra: { user_id: current_user.id, response_body: e.response&.body })
+    current_user.hcb_oauth_connection&.destroy
+    redirect_to new_hcb_oauth_connection_path, alert: "Your HCB connection expired. Please reconnect."
+  end
+
   def index
     @payment_accounts = current_user.hcb_payment_accounts
   end

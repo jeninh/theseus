@@ -34,26 +34,18 @@ class HCB::OauthConnection < ApplicationRecord
       refresh_token: refresh_token,
       expires_at: expires_at&.to_i,
       base_url: hcb_api_base,
+      on_token_refresh: ->(token) {
+        update!(
+          access_token: token.token,
+          refresh_token: token.refresh_token,
+          expires_at: token.expires_at ? Time.at(token.expires_at) : nil,
+        )
+      }
     )
   end
 
   def organizations
-    result = client.organizations
-    persist_refreshed_token!
-    result
-  end
-
-  def persist_refreshed_token!
-    token = client.oauth_token
-    return unless token.respond_to?(:token)
-
-    if token.token != access_token || token.refresh_token != refresh_token
-      update!(
-        access_token: token.token,
-        refresh_token: token.refresh_token,
-        expires_at: token.expires_at ? Time.at(token.expires_at) : nil,
-      )
-    end
+    client.organizations
   end
 
   private
