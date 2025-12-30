@@ -4,9 +4,13 @@ class HCB::PaymentAccountsController < ApplicationController
   before_action :require_hcb_connection, except: [:index]
   before_action :set_payment_account, only: [:show]
 
+  rescue_from HCBV4::APIError do |e|
+    event_id = Sentry.capture_exception(e, extra: { user_id: current_user.id })&.event_id
+    redirect_to hcb_payment_accounts_path, alert: "Failed to load HCB organizations: #{e.message} (#{event_id})"
+  end
+
   def index
     @payment_accounts = current_user.hcb_payment_accounts
-    @available_organizations = available_organizations
   end
 
   def new
@@ -54,9 +58,6 @@ class HCB::PaymentAccountsController < ApplicationController
     current_user.hcb_oauth_connection.organizations.reject do |org|
       HCB::PaymentAccount::BLOCKED_ORGANIZATION_IDS.include?(org.id)
     end
-  rescue => e
-    Rails.logger.error "Failed to fetch HCB organizations: #{e.message}"
-    []
   end
 
   def find_organization(org_id)
