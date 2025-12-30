@@ -102,7 +102,7 @@ class Warehouse::Batch < Batch
       begin
         Zenventory.create_customer_order(update_hash)
       rescue Zenventory::ZenventoryError => e
-        event_id = Sentry.capture_exception(e)
+        event_id = Sentry.capture_exception(e)&.event_id
         errors.add(:base, "couldn't create order, Zenventory said: #{e.message} (error: #{event_id})")
         throw(:abort)
       end

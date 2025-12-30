@@ -173,7 +173,7 @@ class Warehouse::Order < ApplicationRecord
       }.compact_blank
       Zenventory.update_customer_order(zenventory_id, update_hash) unless update_hash.empty?
     rescue Zenventory::ZenventoryError => e
-      event_id = Sentry.capture_exception(e)
+      event_id = Sentry.capture_exception(e)&.event_id
       errors.add(:base, "couldn't edit order, Zenventory said: #{e.message} (error: #{event_id})")
       throw(:abort)
     end

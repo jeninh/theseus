@@ -36,7 +36,7 @@ module SnailMail
         pdf.image io, at: [x, y], width: size, height: size
       rescue => e
         Rails.logger.error("QR code generation failed: #{e.message}")
-        event_id = Sentry.capture_exception(e)
+        event_id = Sentry.capture_exception(e)&.event_id
         pdf.text_box "QR Error (error: #{event_id})", at: [x, y], width: size, height: size
       end
     end

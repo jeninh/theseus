@@ -114,7 +114,7 @@ class Warehouse::BatchesController < BaseBatchesController
         @batch.run_map!
       rescue StandardError => e
         Rails.logger.warn(e)
-        event_id = Sentry.capture_exception(e)
+        event_id = Sentry.capture_exception(e)&.event_id
         redirect_to warehouse_batch_path(@batch), flash: { alert: "Error mapping fields! #{e.message} (error: #{event_id})" }
         return
       end

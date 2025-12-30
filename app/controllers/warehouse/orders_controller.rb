@@ -38,11 +38,11 @@ class Warehouse::OrdersController < ApplicationController
     begin
       @warehouse_order.dispatch!
     rescue Zenventory::ZenventoryError => e
-      event_id = Sentry.capture_exception(e)
+      event_id = Sentry.capture_exception(e)&.event_id
       redirect_to @warehouse_order, alert: "zenventory said \"#{e.message}\" (error: #{event_id})"
       return
     rescue AASM::InvalidTransition => e
-      event_id = Sentry.capture_exception(e)
+      event_id = Sentry.capture_exception(e)&.event_id
       redirect_to @warehouse_order, alert: "couldn't dispatch order! wrong state? (error: #{event_id})"
       return
     end

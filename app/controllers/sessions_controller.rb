@@ -44,7 +44,7 @@ class SessionsController < ApplicationController
       @user = User.from_hack_club_auth(auth)
     rescue => e
       Rails.logger.error "Error creating user from Hack Club Auth: #{e.message}"
-      event_id = Sentry.capture_exception(e)
+      event_id = Sentry.capture_exception(e)&.event_id
       redirect_to login_path, alert: "error authenticating! (error: #{event_id})"
       return
     end

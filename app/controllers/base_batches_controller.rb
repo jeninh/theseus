@@ -65,7 +65,7 @@ class BaseBatchesController < ApplicationController
         @batch.run_map!
       rescue StandardError => e
         Rails.logger.warn(e)
-        event_id = Sentry.capture_exception(e)
+        event_id = Sentry.capture_exception(e)&.event_id
         redirect_to send("#{@batch.class.name.split("::").first.downcase}_batch_path", @batch), flash: { alert: "error mapping fields! #{e.message} (error: #{event_id})" }
         return
       end
