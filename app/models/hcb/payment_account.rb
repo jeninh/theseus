@@ -84,7 +84,6 @@ class HCB::PaymentAccount < ApplicationRecord
     if memo && result.transaction_id
       client.update_transaction(result.transaction_id, event_id: organization_id, memo: memo)
     end
-    oauth_connection.persist_refreshed_token!
     result
   end
 end
