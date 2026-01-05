@@ -16,7 +16,6 @@ module SnailMail
           true
         end
 
-
         def view_template
           # Add your template content here
 
@@ -36,8 +35,8 @@ module SnailMail
             140,
             220,
             71,
-            size: 14, 
-            valign: :bottom, 
+            size: 14,
+            valign: :bottom,
             align: :left
           )
 

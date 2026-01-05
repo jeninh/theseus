@@ -16,7 +16,6 @@ module SnailMail
           true
         end
 
-
         def view_template
 
           image(
@@ -34,8 +33,8 @@ module SnailMail
             155,
             230,
             55,
-            size: 12, 
-            valign: :center, 
+            size: 12,
+            valign: :center,
             align: :center
           )
 
