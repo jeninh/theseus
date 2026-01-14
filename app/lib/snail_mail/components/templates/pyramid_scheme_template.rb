@@ -21,9 +21,9 @@ module SnailMail
           # )
 
           # Render return address
-          render_return_address(10, 270, 130, 70, font: "gohu")
+          render_return_address(10, 280, 130, 50, font: "gohu")
 
-          if letter.rubber_stamps.present?
+          if false && letter.rubber_stamps.present?
             font("gohu") do
               text_box(
                 letter.rubber_stamps,
@@ -42,14 +42,14 @@ module SnailMail
           # Render destination address in speech bubble
           render_destination_address(
             79.5,
-            202,
+            180,
             237,
             100,
             size: 16, valign: :bottom, align: :left, font: "gohu"
           )
 
           # Render IMb barcode
-          render_imb(78, 102, 237)
+          render_imb(78, 80, 237)
 
           # Render QR code for tracking
           render_qr_code(7, 67, 60)
