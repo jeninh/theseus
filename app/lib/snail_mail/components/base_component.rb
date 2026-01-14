@@ -35,6 +35,27 @@ module SnailMail
         super()
       end
 
+      def preview_mode?
+        options[:preview_mode] == true
+      end
+
+      def stroke_preview_bounds(x, y, width, height, label: nil)
+        return unless preview_mode?
+
+        save_graphics_state do
+          stroke_color "FF1493" # deeppink
+          line_width 1
+          stroke_rectangle [x, y], width, height
+
+          if label
+            fill_color "FF1493"
+            font("arial", size: 6) do
+              draw_text label, at: [x + 2, y - 8]
+            end
+          end
+        end
+      end
+
       # Size in points [width, height]
       def size
         SIZES[self.class.template_size] || SIZES[:standard]
