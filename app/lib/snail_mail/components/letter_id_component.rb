@@ -21,6 +21,8 @@ module SnailMail
             **options.except(:font)
           )
         end
+
+        stroke_preview_bounds(@x, @y, 50, @size, label: "letter ID")
       end
     end
   end

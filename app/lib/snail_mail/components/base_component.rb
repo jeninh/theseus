@@ -69,16 +69,16 @@ module SnailMail
       protected
 
       # Helper methods to render components
-      def render_return_address(x, y, width, height, **options)
-        render ReturnAddressComponent.new(letter: letter, x: x, y: y, width: width, height: height, **options)
+      def render_return_address(x, y, width, height, **opts)
+        render ReturnAddressComponent.new(letter: letter, x: x, y: y, width: width, height: height, **opts.merge(preview_mode: preview_mode?))
       end
 
-      def render_destination_address(x, y, width, height, **options)
-        render DestinationAddressComponent.new(letter: letter, x: x, y: y, width: width, height: height, **options)
+      def render_destination_address(x, y, width, height, **opts)
+        render DestinationAddressComponent.new(letter: letter, x: x, y: y, width: width, height: height, **opts.merge(preview_mode: preview_mode?))
       end
 
-      def render_imb(x, y, width, **options)
-        render IMbComponent.new(letter: letter, x: x, y: y, width: width, **options)
+      def render_imb(x, y, width, **opts)
+        render IMbComponent.new(letter: letter, x: x, y: y, width: width, **opts.merge(preview_mode: preview_mode?))
       end
 
       def render_qr_code(x, y, size = 70)

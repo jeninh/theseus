@@ -16,6 +16,8 @@ module SnailMail
         font("f25") do
           text_box("scan this so we know you got it!", at: [@x + 3, @y + 22], width: 54, size: 6.4)
         end
+
+        stroke_preview_bounds(@x, @y, @size, @size, label: "QR code")
       end
     end
   end

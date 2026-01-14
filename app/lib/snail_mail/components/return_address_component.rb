@@ -31,6 +31,8 @@ module SnailMail
             **opts,
           )
         end
+
+        stroke_preview_bounds(@x, @y, @width, @height, label: "return address")
       end
 
       private

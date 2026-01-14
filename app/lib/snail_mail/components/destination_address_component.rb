@@ -37,6 +37,8 @@ module SnailMail
         if stroke_box
           stroke { rectangle([@x, @y], @width, @height) }
         end
+
+        stroke_preview_bounds(@x, @y, @width, @height, label: "destination address")
       end
     end
   end
