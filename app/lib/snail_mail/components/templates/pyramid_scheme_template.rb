@@ -52,7 +52,7 @@ module SnailMail
           render_imb(78, 102, 237)
 
           # Render QR code for tracking
-          # render_qr_code(7, 67, 60)
+          render_qr_code(7, 67, 60)
           render_postage
         end
       end
