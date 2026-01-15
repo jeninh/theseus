@@ -61,4 +61,23 @@ class Warehouse::SKU < ApplicationRecord
                  }
 
   has_zenventory_url "https://app.zenventory.com/admin/item-details/%s/basic", :zenventory_id
+
+  def sync_to_zenventory!
+    params = {
+      sku: sku,
+      description: name,
+      category: category&.to_s&.humanize,
+      active: enabled || false,
+      unitCost: declared_unit_cost,
+      userField1: country_of_origin,
+      userField2: hs_code,
+    }.compact
+
+    if zenventory_id.present?
+      Zenventory.update_item(zenventory_id, params)
+    else
+      response = Zenventory.create_item(params)
+      update!(zenventory_id: response[:id].to_s)
+    end
+  end
 end

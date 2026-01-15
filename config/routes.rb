@@ -504,7 +504,11 @@ Rails.application.routes.draw do
       namespace :warehouse do
         resources :templates
         resources :orders
-        resources :skus
+        resources :skus do
+          member do
+            post :sync_to_zenventory
+          end
+        end
       end
 
       namespace :usps do
