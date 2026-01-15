@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_18_194622) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_15_180434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -566,6 +566,33 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_194622) do
     t.index ["user_id"], name: "index_warehouse_orders_on_user_id"
   end
 
+  create_table "warehouse_purchase_order_line_items", force: :cascade do |t|
+    t.bigint "purchase_order_id", null: false
+    t.bigint "sku_id", null: false
+    t.integer "quantity", null: false
+    t.decimal "unit_cost", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["purchase_order_id"], name: "index_warehouse_purchase_order_line_items_on_purchase_order_id"
+    t.index ["sku_id"], name: "index_warehouse_purchase_order_line_items_on_sku_id"
+  end
+
+  create_table "warehouse_purchase_orders", force: :cascade do |t|
+    t.string "supplier_name"
+    t.integer "supplier_id"
+    t.string "order_number"
+    t.text "notes"
+    t.date "required_by_date"
+    t.string "status", default: "draft"
+    t.integer "zenventory_id"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_number"], name: "index_warehouse_purchase_orders_on_order_number"
+    t.index ["user_id"], name: "index_warehouse_purchase_orders_on_user_id"
+    t.index ["zenventory_id"], name: "index_warehouse_purchase_orders_on_zenventory_id", unique: true
+  end
+
   create_table "warehouse_skus", force: :cascade do |t|
     t.string "sku"
     t.text "description"
@@ -643,6 +670,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_18_194622) do
   add_foreign_key "warehouse_orders", "source_tags"
   add_foreign_key "warehouse_orders", "users"
   add_foreign_key "warehouse_orders", "warehouse_templates", column: "template_id"
+  add_foreign_key "warehouse_purchase_order_line_items", "warehouse_purchase_orders", column: "purchase_order_id"
+  add_foreign_key "warehouse_purchase_order_line_items", "warehouse_skus", column: "sku_id"
+  add_foreign_key "warehouse_purchase_orders", "users"
   add_foreign_key "warehouse_templates", "source_tags"
   add_foreign_key "warehouse_templates", "users"
 end

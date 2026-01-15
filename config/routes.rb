@@ -550,6 +550,12 @@ Rails.application.routes.draw do
           post "send_to_warehouse"
         end
       end
+      resources :purchase_orders do
+        member do
+          post :send_to_zenventory
+          post :sync
+        end
+      end
       resources :batches do
         member do
           get "/map", to: "batches#map_fields", as: :map_fields

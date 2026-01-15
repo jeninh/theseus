@@ -1,0 +1,86 @@
+<% content_for :title, "Purchase Order ##{@purchase_order.id}" %>
+
+<div>
+  <h2 class="inline">
+    Purchase Order #<%= @purchase_order.id %>
+  </h2>
+  <%= render 'status_badge', purchase_order: @purchase_order %>
+</div>
+
+<div class="my-4">
+  <b>Supplier:</b> <%= @purchase_order.supplier_name %><br>
+  <% if @purchase_order.supplier_id.present? %>
+    <b>Supplier ID:</b> <%= @purchase_order.supplier_id %><br>
+  <% end %>
+  <% if @purchase_order.order_number.present? %>
+    <b>Order Number:</b> <%= @purchase_order.order_number %><br>
+  <% end %>
+  <% if @purchase_order.required_by_date.present? %>
+    <b>Required By:</b> <%= @purchase_order.required_by_date.strftime("%B %d, %Y") %><br>
+  <% end %>
+  <b>Created By:</b> <%= link_to @purchase_order.user&.email, @purchase_order.user %><br>
+  <b>Created At:</b> <%= @purchase_order.created_at.strftime("%B %d, %Y at %I:%M %p") %><br>
+</div>
+
+<% if @purchase_order.notes.present? %>
+  <div class="my-4">
+    <b>Notes:</b><br>
+    <%= simple_format(@purchase_order.notes) %>
+  </div>
+<% end %>
+
+<div class="my-4">
+  <b>Line Items:</b>
+  <table class="table-fixed text-left border border-gray-300 border-collapse mt-2">
+    <thead>
+      <tr>
+        <th class="border border-gray-300 p-2">SKU</th>
+        <th class="border border-gray-300 p-2">Quantity</th>
+        <th class="border border-gray-300 p-2">Unit Cost</th>
+        <th class="border border-gray-300 p-2">Line Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @purchase_order.line_items.each do |li| %>
+        <tr>
+          <td class="border border-gray-400 p-2">
+            <%= link_to li.sku.name, warehouse_sku_path(li.sku), target: '_blank' %>
+            <span class="text-gray-500">(<%= li.sku.sku %>)</span>
+          </td>
+          <td class="border border-gray-400 p-2"><%= li.quantity %></td>
+          <td class="border border-gray-400 p-2"><%= number_to_currency(li.unit_cost) %></td>
+          <td class="border border-gray-400 p-2"><%= number_to_currency((li.unit_cost || 0) * li.quantity) %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <td colspan="3" class="border border-gray-400 p-2 text-right"><b>Total:</b></td>
+        <td class="border border-gray-400 p-2"><b><%= number_to_currency(@purchase_order.total_cost) %></b></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<% zenv_link @purchase_order %>
+
+<div class="my-4 space-x-2">
+  <% if policy(@purchase_order).send_to_zenventory? && @purchase_order.may_mark_open? %>
+    <%= button_to "Send to Zenventory", send_to_zenventory_warehouse_purchase_order_path(@purchase_order), method: :post %>
+  <% end %>
+
+  <% if policy(@purchase_order).sync? %>
+    <%= button_to "Sync from Zenventory", sync_warehouse_purchase_order_path(@purchase_order), method: :post %>
+  <% end %>
+
+  <% if policy(@purchase_order).destroy? %>
+    <%= button_to "Delete", warehouse_purchase_order_path(@purchase_order), method: :delete, data: { confirm: "Are you sure?" } %>
+  <% end %>
+</div>
+
+<div>
+  <% if policy(@purchase_order).edit? %>
+    <%= link_to "Edit this purchase order", edit_warehouse_purchase_order_path(@purchase_order) %><br>
+  <% end %>
+  <%= link_to "Back to purchase orders", warehouse_purchase_orders_path %>
+</div>
+
+<%= render partial: "admin_inspector", locals: { record: @purchase_order } %>

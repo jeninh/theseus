@@ -82,12 +82,24 @@ class Zenventory
       conn.post("purchase-orders", **params).body
     end
 
+    def draft_purchase_order(params = {})
+      create_purchase_order(draft: true, **params)
+    end
+
     def update_purchase_order(id, params = {})
       conn.put("purchase-orders/#{id}", **params).body
     end
 
+    def finalize_purchase_order(id, params = {})
+      update_purchase_order(id, draft: false, **params)
+    end
+
     def close_purchase_order(id)
       conn.put("purchase-orders/#{id}/close").body
+    end
+
+    def get_suppliers
+      get_purchase_orders.map { |po| po[:supplier] }.compact.uniq { |s| s[:id] }
     end
 
     def run_report(category, report_key, params = {})
