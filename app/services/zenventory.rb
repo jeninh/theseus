@@ -62,12 +62,32 @@ class Zenventory
       conn.get("items/#{id}", includeUnits: include_units, includeBom: include_bom).body
     end
 
+    def create_item(params = {})
+      conn.post("items", **params).body
+    end
+
+    def update_item(id, params = {})
+      conn.put("items/#{id}", **params).body
+    end
+
     def get_purchase_orders(params = {})
       paginated_get("purchase-orders", :purchaseOrders, params)
     end
 
     def get_purchase_order(id)
       conn.get("purchase-orders/#{id}").body
+    end
+
+    def create_purchase_order(params = {})
+      conn.post("purchase-orders", **params).body
+    end
+
+    def update_purchase_order(id, params = {})
+      conn.put("purchase-orders/#{id}", **params).body
+    end
+
+    def close_purchase_order(id)
+      conn.put("purchase-orders/#{id}/close").body
     end
 
     def run_report(category, report_key, params = {})
