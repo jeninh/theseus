@@ -54,7 +54,7 @@ module SnailMail
           super
           image(
             image_path("hackatime/this_is_fine.png"),
-            at: [0,130],
+            at: [75, 130],
             height: 140
           )
         end
