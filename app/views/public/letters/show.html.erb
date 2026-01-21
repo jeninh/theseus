@@ -61,7 +61,7 @@
 </details>
 </p>
 <%= render partial: 'application/admin_inspector', locals: { record: @letter } %>
-<% if @from_qr && @letter.may_mark_mailed? %>
+<% if (@from_qr || current_user) && @letter.may_mark_mailed? %>
   <section class="field-row" style="justify-content: flex-end">
     <%= button_to "MARK MAILED", public_mark_mailed_letter_path(@letter, qr: 1), style: "font-size: 24px; padding: 20px 40px; font-weight: bold;" %>
   </section>
