@@ -46,14 +46,15 @@ module SnailMail
           render_qr_code(5, 65, 60)
           render_letter_id(10, 19, 10)
 
-            bounding_box [10, 160],
-                         width: 220,
-                         height: 40,
+            bounding_box [10, 220 ],
+                         width: 100,
+                         height: 140,
                          valign: :bottom do
               font_size 8
               font_size(10) { font("comic") { text "it's here!" } }
               text "contents:", style: :bold
-              text letter.rubber_stamps || ""
+              font_size 6.2
+              text letter.rubber_stamps.gsub(", ","\n") || ""
             end
           
 
