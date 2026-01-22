@@ -65,8 +65,10 @@ class Letter::QueuesController < ApplicationController
     unless @letter_queue.letters.any?
       flash[:error] = "no letters?"
       redirect_to @letter_queue
+      return
     end
-    batch = @letter_queue.make_batch(user: current_user)
+    limit = params[:limit].presence&.to_i
+    batch = @letter_queue.make_batch(user: current_user, limit:)
     User::UpdateTasksJob.perform_now(current_user)
     flash[:success] = "now do something with it!"
     redirect_to process_letter_batch_path(batch, uft: @letter_queue.user_facing_title, template: @letter_queue.template)

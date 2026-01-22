@@ -88,7 +88,11 @@
 <%= render partial: 'batches/letters_collection', locals: { letters: @letters } %>
 <% if @letter_queue.letters.queued.any? %>
   <div class="mt-4">
-    <%= button_to "make batch!", make_batch_from_letter_queue_path(@letter_queue), class: "btn success" %>
+    <%= form_with url: make_batch_from_letter_queue_path(@letter_queue), method: :post, class: "inline-flex items-center gap-2" do |f| %>
+      <%= f.label :limit, "take" %>
+      <%= f.number_field :limit, min: 1, max: @letters.count, placeholder: "all", class: "w-20" %>
+      <%= f.submit "make batch!", class: "btn success" %>
+    <% end %>
   </div>
 <% end %>
 <hr/>

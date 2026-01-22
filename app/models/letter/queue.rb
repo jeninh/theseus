@@ -76,7 +76,7 @@ class Letter::Queue < ApplicationRecord
     letter
   end
 
-  def make_batch(user:)
+  def make_batch(user:, limit: nil)
     ActiveRecord::Base.transaction do
       batch = letter_batches.build(
         aasm_state: :fields_mapped,
@@ -93,7 +93,9 @@ class Letter::Queue < ApplicationRecord
         user: user,
       )
       batch.save!
-      letters.queued.each do |letter|
+      queued_letters = letters.queued
+      queued_letters = queued_letters.limit(limit) if limit.present?
+      queued_letters.each do |letter|
         letter.batch_id = batch.id
         letter.batch_from_queue
         letter.save!
