@@ -11,12 +11,15 @@ class TasksController < ApplicationController
   end
 
   def refresh
-    User::UpdateTasksJob.perform_now(current_user)
+    User::UpdateTasksJob.perform_later(current_user)
     redirect_to tasks_path
   end
 
   def find_tasks
     @tasks = Rails.cache.read("user_tasks/#{current_user.id}")
-    @tasks ||= User::UpdateTasksJob.perform_now(current_user)
+    if @tasks.nil?
+      User::UpdateTasksJob.perform_later(current_user)
+      @tasks = []
+    end
   end
 end

@@ -1,6 +1,11 @@
 class Public::UpdateMapDataJob < ApplicationJob
   queue_as :default
 
+  good_job_control_concurrency_with(
+    total_limit: 1,
+    key: "update_map_data"
+  )
+
   def perform
     map_data = fetch_recent_letters_data
     Rails.cache.write("map_data", map_data, expires_in: 1.hour)

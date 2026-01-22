@@ -154,7 +154,7 @@ class Letter::BatchesController < BaseBatchesController
       @batch.letters.each do |letter|
         letter.mark_mailed! if letter.may_mark_mailed?
       end
-      User::UpdateTasksJob.perform_now(current_user)
+      User::UpdateTasksJob.perform_later(current_user)
       redirect_to letter_batch_path(@batch), notice: "All letters have been marked as mailed."
     else
       redirect_to letter_batch_path(@batch), alert: "Cannot mark letters as mailed. Batch must be processed."

@@ -65,7 +65,7 @@ class Batch < ApplicationRecord
     event :mark_processed do
       transitions from: :fields_mapped, to: :processed
       after do
-        User::UpdateTasksJob.perform_now(user)
+        User::UpdateTasksJob.perform_later(user)
       end
     end
   end

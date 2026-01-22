@@ -69,7 +69,7 @@ class Letter::QueuesController < ApplicationController
     end
     limit = params[:limit].presence&.to_i
     batch = @letter_queue.make_batch(user: current_user, limit:)
-    User::UpdateTasksJob.perform_now(current_user)
+    User::UpdateTasksJob.perform_later(current_user)
     flash[:success] = "now do something with it!"
     redirect_to process_letter_batch_path(batch, uft: @letter_queue.user_facing_title, template: @letter_queue.template)
   end
@@ -102,7 +102,7 @@ class Letter::QueuesController < ApplicationController
     end
 
     # Update user tasks after marking letters as mailed
-    User::UpdateTasksJob.perform_now(current_user) if marked_count > 0
+    User::UpdateTasksJob.perform_later(current_user) if marked_count > 0
 
     if failed_letters.any?
       flash[:alert] = "Marked #{marked_count} letters as mailed, but failed to mark #{failed_letters.count} letters: #{failed_letters.join(", ")}"

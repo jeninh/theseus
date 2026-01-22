@@ -7,9 +7,10 @@ module Public
 
     def show
       @return_path = public_root_path
-      @letters_data = Rails.cache.fetch("map_data") do
-        # If cache is empty, run the job synchronously as a fallback
-        Public::UpdateMapDataJob.perform_now
+      @letters_data = Rails.cache.read("map_data")
+      if @letters_data.nil?
+        Public::UpdateMapDataJob.perform_later
+        @letters_data = []
       end
     end
   end
