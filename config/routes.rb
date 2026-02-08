@@ -566,7 +566,6 @@ Rails.application.routes.draw do
       end
       resources :skus
     end
-    resources :users
     resources :return_addresses do
       member do
         post :set_as_home
