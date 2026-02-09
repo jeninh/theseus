@@ -139,18 +139,11 @@ class Batch < ApplicationRecord
     tokens = items.map { |item| item[:token] }
     addresses_by_token = Address.where(import_token: tokens).index_by(&:import_token)
 
-    Parallel.each(items, in_threads: 8) do |item|
-      begin
-        address = addresses_by_token.fetch(item[:token])
+    items.each do |item|
+      address = addresses_by_token.fetch(item[:token])
 
-        ActiveRecord::Base.connection_pool.with_connection do
-          ActiveRecord::Base.transaction do
-            build_mapping(item[:row], address)
-          end
-        end
-      rescue => e
-        Rails.logger.error("Error creating associated records for address in batch #{id}: #{e.message}")
-        raise
+      ActiveRecord::Base.transaction do
+        build_mapping(item[:row], address)
       end
     end
 
