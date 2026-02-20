@@ -5,6 +5,7 @@ module API
       attr_reader :current_user
 
       before_action :authenticate!
+      before_action :require_not_qz_only!
       before_action :set_expand
       before_action :set_pii
 
@@ -38,6 +39,12 @@ module API
       end
 
       def set_pii = @pii = current_token&.pii?
+
+      def require_not_qz_only!
+        if current_token&.qz_only?
+          render json: { error: "qz_only_key" }, status: :forbidden
+        end
+      end
 
       def authenticate!
         @current_token = authenticate_with_http_token { |t, _options| APIKey.find_by(token: t) }

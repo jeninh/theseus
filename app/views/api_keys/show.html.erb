@@ -32,6 +32,11 @@
 <div>
   <b>sees PII?</b> <%= render_checkbox @api_key.pii %>
 </div>
+<% if @api_key.qz_only? %>
+  <div>
+    <b>QZ Tray only?</b> <%= render_checkbox true %>
+  </div>
+<% end %>
 <% if @api_key.may_impersonate? %>
   <div>
     <b>can impersonate?</b> <%= render_checkbox true %>

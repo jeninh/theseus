@@ -14,6 +14,14 @@
   </fieldset>
   <% admin_tool do %>
     <fieldset>
+      <%= f.label :qz_only, "QZ Tray only?" %>
+      <%= f.check_box :qz_only %>
+      <label for="api_key_qz_only">
+        restrict this key to QZ Tray endpoints only?
+        <small><small>(for printer auth)</small></small>
+      </label>
+    </fieldset>
+    <fieldset>
       <%= f.label :may_impersonate, "Can impersonate?" %>
       <%= f.check_box :may_impersonate %>
       <label for="api_key_may_impersonate">

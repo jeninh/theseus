@@ -698,6 +698,7 @@ Rails.application.routes.draw do
         resource :qz_tray, only: [] do
           get :cert
           post :sign
+          match :cert, :sign, via: :options, to: "qz_trays#preflight"
         end
         resources :tags, only: [:index, :show] do
           member do
