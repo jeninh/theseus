@@ -53,7 +53,7 @@ class Views::Letter::Batches::Process < Views::Base
         input(
           type: "text",
           name: "batch[user_facing_title]",
-          value: @batch.user_facing_title,
+          value: @batch.default_user_facing_title,
           placeholder: "e.g. Monthly Newsletter, YSWS Stickers Round 3",
           class: "w-100",
           autofocus: true

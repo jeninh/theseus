@@ -35,7 +35,7 @@ render Components::Shared::ErrorMessages.new(record: @batch)
                   type: "text",
                   name: "letter_batch[user_facing_title]",
                   id: "letter_batch_user_facing_title",
-                  value: @batch.user_facing_title,
+                  value: @batch.default_user_facing_title,
                   class: "w-100"
                 )
                 p(class: "form-hint") { "Visible to recipients. Shows in the batch list." }

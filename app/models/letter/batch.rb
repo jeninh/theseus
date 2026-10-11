@@ -267,6 +267,12 @@ class Letter::Batch < Batch
     letters.update_all(tags: tags, user_facing_title: user_facing_title)
   end
 
+  def default_user_facing_title
+    user_facing_title.presence ||
+      process_options&.dig("user_facing_title").presence ||
+      letter_queue&.user_facing_title.presence
+  end
+
   private
 
   def update_letter_tags
