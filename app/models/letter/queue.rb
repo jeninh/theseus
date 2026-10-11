@@ -49,6 +49,7 @@ class Letter::Queue < ApplicationRecord
   has_many :letter_batches, class_name: "Letter::Batch", foreign_key: :letter_queue_id
   belongs_to :letter_mailer_id, class_name: "USPS::MailerId", foreign_key: "letter_mailer_id_id", optional: true
   belongs_to :letter_return_address, class_name: "ReturnAddress", optional: true
+  belongs_to :billing_profile, class_name: "BillingProfile", foreign_key: :hcb_payment_account_id, optional: true
 
   before_validation :set_slug, on: :create
 
@@ -59,6 +60,7 @@ class Letter::Queue < ApplicationRecord
   validates :letter_processing_category, presence: true
   validates :tags, presence: true, length: { minimum: 1 }
   validate :type_cannot_be_changed, on: :update
+  validate :billing_profile_belongs_to_user
 
   def create_letter!(address, params)
     letter = letters.build(
@@ -108,6 +110,12 @@ class Letter::Queue < ApplicationRecord
 
   def to_param
     slug
+  end
+
+  def billing_profile_belongs_to_user
+    if billing_profile.present? && billing_profile.user != user
+      errors.add(:billing_profile, "must belong to the queue's user")
+    end
   end
 
   private

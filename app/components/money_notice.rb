@@ -9,11 +9,12 @@ class Components::MoneyNotice < Components::Base
     @quote = ::Billing::Quote.new(lines)
     @profiles = Array(profiles)
     @field = field
-    @selected = selected || @profiles.first
     @proceed = proceed
     @cancel_href = cancel_href
     @refund = refund
     @locked = locked || @profiles.size == 1 && @proceed.nil?
+    @selected = selected
+    @selected ||= @profiles.first if @locked || @profiles.size == 1
     @id = id
     @refresh_url = refresh_url
     @connect_href = connect_href

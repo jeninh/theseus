@@ -222,7 +222,7 @@ class Views::Letter::Batches::Process < Views::Base
   end
 
   def queue_default_profile
-    queue_bp = @batch.letter_queue&.try(:billing_profile)
+    queue_bp = @batch.letter_queue&.billing_profile
     return unless queue_bp
 
     current_user.billing_profiles.find_by(organization_id: queue_bp.organization_id)

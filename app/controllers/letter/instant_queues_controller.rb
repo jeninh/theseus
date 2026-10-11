@@ -58,7 +58,7 @@ class Letter::InstantQueuesController < Letter::QueuesController
     @letter_queue = Letter::InstantQueue.find_by!(slug: params[:id])
   end
 
-  INSTANT_QUEUE_ATTRIBUTES = (QUEUE_ATTRIBUTES - %i[letter_mailing_date] + %i[hcb_payment_account_id]).freeze
+  INSTANT_QUEUE_ATTRIBUTES = (QUEUE_ATTRIBUTES - %i[letter_mailing_date]).freeze
 
   def letter_queue_params
     scoped_return_address(params.require(:letter_instant_queue).permit(*admin_scoped(INSTANT_QUEUE_ATTRIBUTES), tags: []))
