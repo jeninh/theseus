@@ -84,6 +84,7 @@ class Components::MoneyNotice < Components::Base
         input(type: "hidden", name: @field, value: @selected.id) if @field && !@locked
       else
         select(name: @field, required: true, data: { money_select: true }) do
+          option(value: "", selected: true) { "select an organization…" } if @selected.nil?
           @profiles.each do |profile|
             option(value: profile.id, selected: profile.id == @selected&.id) { profile.organization_name }
           end
