@@ -9,11 +9,12 @@ class Components::MoneyNotice < Components::Base
     @quote = ::Billing::Quote.new(lines)
     @profiles = Array(profiles)
     @field = field
-    @selected = selected || @profiles.first
     @proceed = proceed
     @cancel_href = cancel_href
     @refund = refund
     @locked = locked || @profiles.size == 1 && @proceed.nil?
+    @selected = selected
+    @selected ||= @profiles.first if @locked || @profiles.size == 1
     @id = id
     @refresh_url = refresh_url
     @connect_href = connect_href
@@ -84,6 +85,7 @@ class Components::MoneyNotice < Components::Base
         input(type: "hidden", name: @field, value: @selected.id) if @field && !@locked
       else
         select(name: @field, required: true, data: { money_select: true }) do
+          option(value: "", selected: true) { "select an organization…" } if @selected.nil?
           @profiles.each do |profile|
             option(value: profile.id, selected: profile.id == @selected&.id) { profile.organization_name }
           end

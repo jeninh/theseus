@@ -79,6 +79,8 @@ render Components::Shared::ErrorMessages.new(record: queue)
         span(class: "text-muted field-note-sm") { "Leave blank to use the address' default name" }
       end
 
+      billing_profile_picker
+
       # Admin slug
       admin_tool do
         div(class: "form-field-lg") do
@@ -109,6 +111,27 @@ render Components::Shared::ErrorMessages.new(record: queue)
     h3(class: "form-section-heading") { text }
   end
 
+  def billing_profile_picker
+    if current_user.billing_profiles.any?
+      select_field(
+        name: "letter_queue[hcb_payment_account_id]",
+        label: "Default HCB organization",
+        options: [ [ "No default \u2014 pick at process time", "" ] ] +
+          current_user.billing_profiles.map { |a| [ a.organization_name, a.id ] },
+        selected: queue.hcb_payment_account_id,
+        note: "Preselected when you process a batch from this queue."
+      )
+    else
+      div(class: "form-field-lg") do
+        label(class: "date-field-label") { "Default HCB organization" }
+        p(class: "page-subtitle mt-1") do
+          a(href: new_hcb_oauth_connection_path) { "Connect your HCB account" }
+          plain " to pay for indicia."
+        end
+      end
+    end
+  end
+
   def tag_picker(f)
     div(class: "form-field-lg") do
       label(class: "date-field-label") { "Tags" }
@@ -125,7 +148,7 @@ render Components::Shared::ErrorMessages.new(record: queue)
     end
   end
 
-  def select_field(name:, label:, options:, selected: nil, link: nil)
+  def select_field(name:, label:, options:, selected: nil, link: nil, note: nil)
     div(class: "form-field-lg") do
       div(class: "form-label-group") do
         label(class: "date-field-label") { label }
@@ -138,6 +161,7 @@ render Components::Shared::ErrorMessages.new(record: queue)
           option(value: value, selected: value.to_s == selected.to_s) { display }
         end
       end
+      span(class: "text-muted field-note-sm") { note } if note
     end
   end
 end
