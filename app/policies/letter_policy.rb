@@ -4,7 +4,7 @@ class LetterPolicy < ApplicationPolicy
   end
 
   def show?
-    record_belongs_to_user || user_is_admin
+    record_belongs_to_user || user_can_view_all
   end
 
   def new?
@@ -65,7 +65,7 @@ class LetterPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user&.admin?
+      if user&.admin? || user&.can_view_all?
         scope.all
       elsif user.present?
         scope.where(user: user)

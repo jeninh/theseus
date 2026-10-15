@@ -53,6 +53,10 @@ class ApplicationPolicy
     user&.admin?
   end
 
+  def user_can_view_all
+    user&.can_view_all? || user_is_admin
+  end
+
   def user_can_warehouse
     user&.can_warehouse? || user_is_admin
   end

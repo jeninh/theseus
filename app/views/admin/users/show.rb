@@ -63,6 +63,9 @@ class Views::Admin::Users::Show < Views::Base
         span(class: "detail-label") { "Warehouse" }
         span { permission_badge(@user.can_warehouse) }
 
+        span(class: "detail-label") { "View All" }
+        span { permission_badge(@user.can_view_all) }
+
         span(class: "detail-label") { "Impersonate Public" }
         span { permission_badge(@user.can_impersonate_public) }
       end

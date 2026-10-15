@@ -4,7 +4,7 @@ class Warehouse::TemplatePolicy < ApplicationPolicy
   end
 
   def show?
-    return true if user_is_admin
+    return true if user_can_view_all
     return false unless user_can_warehouse
     record_belongs_to_user || record.public?
   end

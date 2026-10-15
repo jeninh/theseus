@@ -7,7 +7,7 @@ class Letter::QueuePolicy < ApplicationPolicy
 
   def index? = true
 
-  def show? = record_belongs_to_user || user_is_admin
+  def show? = record_belongs_to_user || user_can_view_all
 
   def new? = user.present?
 
@@ -39,7 +39,7 @@ class Letter::QueuePolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user&.admin?
+      if user&.admin? || user&.can_view_all?
         scope.all
       elsif user.present?
         scope.where(user: user)

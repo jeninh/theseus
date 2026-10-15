@@ -59,6 +59,7 @@ class User < ApplicationRecord
   def admin? = is_admin
   def warehouse_czar? = is_warehouse_czar
   def can_use_indicia? = can_use_indicia
+  def can_view_all? = can_view_all
 
   def hcb_connected? = hcb_oauth_connection.present? && !hcb_oauth_connection.invalidated?
 

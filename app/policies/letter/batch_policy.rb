@@ -1,7 +1,7 @@
 class Letter::BatchPolicy < ApplicationPolicy
   def index? = user.present?
 
-  def show? = record_belongs_to_user || user_is_admin
+  def show? = record_belongs_to_user || user_can_view_all
 
   def new? = user.present?
 
@@ -31,7 +31,7 @@ class Letter::BatchPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user&.admin?
+      if user&.admin? || user&.can_view_all?
         scope.all
       elsif user.present?
         scope.where(user: user)
