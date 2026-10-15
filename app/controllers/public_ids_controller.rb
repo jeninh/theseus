@@ -69,11 +69,12 @@ class PublicIdsController < ApplicationController
   # page for this one" and the caller sends the user back with an alert.
   def path_for_record(record)
     case record
-    when Letter then letter_path(record)
-    when Warehouse::Order then warehouse_order_path(record)
-    when Warehouse::Template then warehouse_template_path(record)
-    when Letter::Batch then letter_batch_path(record)
-    when Warehouse::Batch then warehouse_batch_path(record)
+    when Letter
+      policy(record).show? ? letter_path(record) : public_letter_path(record)
+    when Warehouse::Order then warehouse_order_path(record) if policy(record).show?
+    when Warehouse::Template then warehouse_template_path(record) if policy(record).show?
+    when Letter::Batch then letter_batch_path(record) if policy(record).show?
+    when Warehouse::Batch then warehouse_batch_path(record) if policy(record).show?
     when USPS::Indicium
       if current_user.admin?
         inspect_indicium_path(record)
