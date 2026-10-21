@@ -34,18 +34,24 @@ RUN apt-get update -qq && apt-get install --no-install-recommends -y \
     libmagickwand-dev \
     ghostscript \
     libyaml-dev \
-    chromium
+    chromium \
+    xz-utils
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 # Install Node.js and Yarn
-ARG NODE_VERSION=22.18.0
+# Installed from the official nodejs.org binary tarball for the exact pinned
+# version; node-build definitions for 22.23.4 (October 2026 security release)
+# are not yet available in nodenv/node-build.
+ARG NODE_VERSION=22.23.4
 ARG YARN_VERSION=1.22.22
 ENV PATH=/usr/local/node/bin:$PATH
-RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-    npm install -g yarn@$YARN_VERSION && \
-    rm -rf /tmp/node-build-master
+RUN dpkgArch="$(dpkg --print-architecture)" && case "${dpkgArch}" in amd64) nodeArch=x64 ;; arm64) nodeArch=arm64 ;; *) echo "unsupported arch ${dpkgArch}" && exit 1 ;; esac && \
+    curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${nodeArch}.tar.xz" -o /tmp/node.tar.xz && \
+    mkdir -p /usr/local/node && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local/node --strip-components=1 && \
+    rm /tmp/node.tar.xz && \
+    npm install -g yarn@$YARN_VERSION
 
 # Rails app lives here
 WORKDIR /rails
